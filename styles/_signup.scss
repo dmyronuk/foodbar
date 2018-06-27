@@ -1,17 +1,36 @@
-.signup-container{
+.auth-container{
   background:white;
-  padding:1em 2em 2em 2em;
+  padding:2em 2em 2em 2em;
   margin-top:30px;
   box-shadow:-1px 1px 1px #333333;
 
-  h2{
+  .auth-button{
     font-size:1.5em;
     margin:0 auto 0 auto;
-    text-align:center;
+    border:none;
+    background:blue;
+    color:white;
+    border-radius:0.25rem;
+    padding:.1em .5em .1em .5em;
   }
 
   label, input{
     display:block;
     margin:0 auto 1em auto;
     }
+
+  .auth-err-container{
+
+    margin:0.5em auto 0 auto;
+    text-align:center;
+
+    h4{
+      font-size:1em;
+    }
+
+    .auth-err-msg{
+      color:red;
+      font-size:0.75em
+    }
+  }
 }

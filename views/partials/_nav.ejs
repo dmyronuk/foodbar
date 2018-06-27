@@ -1,15 +1,31 @@
 <div class="nav-top">
-  <div>Signed In As Username</div>
+  <div class="nav-left">
+    <% if(username){ %>
+      <%= `Signed in as ${username}` %>
+    <% } %>
+  </div>
   <div>
-    <h1>Title</h1>
+    <a href="/">
+      <h1>Title</h1>
+    </a>
   </div>
   <div class="nav-right">
     <div>
-      <img src="images/white-cart.png" />
-    </div>
-    <div>
-      <button>Sign Up</button>
-      <button>Login</button>
+      <% if(username) { %>
+        <div class="cart-button">
+          <img src="images/cart.png" />
+        </div>
+        <form action="/logout" method="POST">
+          <input class="auth-button" type="submit" value="Logout">
+        </form>
+      <% }else{ %>
+        <a href="/signup">
+          <button class="auth-button">Sign Up</button>
+        </a>
+        <a href="/login">
+          <button class="auth-button">Login</button>
+        </a>
+      <% } %>
     </div>
 
   </div>
