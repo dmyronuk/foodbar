@@ -8,7 +8,7 @@ const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
 
 const pg = require("pg");
-const knex = require("./db/create-knex-client.js");
+const knex = require("./db/knexfile.js");
 const mockDB = {
   users:{}
 };
