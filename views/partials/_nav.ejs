@@ -11,15 +11,21 @@
   </div>
   <div class="nav-right">
     <div>
-      <img src="images/white-cart.png" />
-    </div>
-    <div>
-      <a href="/signup">
-        <button>Sign Up</button>
-      </a>
-      <a href="/login">
-        <button>Login</button>
-      </a>
+      <% if(username) { %>
+        <div class="cart-button">
+          <img src="images/cart.png" />
+        </div>
+        <form action="/logout" method="POST">
+          <input class="auth-button" type="submit" value="Logout">
+        </form>
+      <% }else{ %>
+        <a href="/signup">
+          <button class="auth-button">Sign Up</button>
+        </a>
+        <a href="/login">
+          <button class="auth-button">Login</button>
+        </a>
+      <% } %>
     </div>
 
   </div>

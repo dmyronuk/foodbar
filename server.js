@@ -159,6 +159,11 @@ app.post("/signup", (req, res) => {
   }
 });
 
+app.post("/logout", (req, res) => {
+  req.session.username = null;
+  res.redirect("/");
+})
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
