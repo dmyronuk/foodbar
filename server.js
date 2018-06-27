@@ -30,9 +30,11 @@ app.use(nodeSassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, "./public")));
 
-app.get("/", (req, res) => {
-  res.render("index");
-});
+
+const validatePassword = (db, username, plaintextPassword) => {
+  let hashedPassword = db.users[username]["password"];
+  return bcrypt.compareSync(plaintextPassword, hashedPassword);
+};
 
 //remove underscores and cap first letter
 let prettyFormatFormField = (field_val) => {
@@ -44,16 +46,49 @@ let prettyFormatFormField = (field_val) => {
   return outStr.trim();
 }
 
+app.get("/", (req, res) => {
+  let templateVars;
+  if(req.session.login_field_errs){
+    templateVars.login_field_errs = req.session.login_field_errs;
+    req.session.login_field_errs = null;
+  }
+
+  res.render("index", templateVars);
+});
+
+app.get("/login", (req, res) => {
+
+  res.render("login")
+})
+
+app.post("/login", (req,res) => {
+  let username = req.body.username;
+  let password = req.body.password;
+
+  //check that post request contains a username and password
+  let login_field_errs = [];
+  if(! username) login_field_errs.push("Username");
+  if(! password) login_field_errs.push("Password");
+  if(login_field_errs.length > 0){
+    req.session.login_field_errs = login_field_errs;
+    res.redirect("/");
+  }else{
+    validatePassword(db, req.body.username, req.body.password)
+    req.session.username = username;
+    res.redirect("/");
+  }
+})
+
 app.get("/signup", (req, res) => {
   //check if previous signup attempt set any session cookie errors ie failed validation
   //save error as template var and destroy cookie
-  let field_errs;
-  if(req.session.field_errs){
-    field_errs = req.session.field_errs;
-    req.session.field_errs = null;
+  let signup_field_errs;
+  if(req.session.signup_field_errs){
+    signup_field_errs = req.session.signup_field_errs;
+    req.session.signup_field_errs = null;
   }
   let templateVars = {
-    field_errs:field_errs,
+    signup_field_errs:signup_field_errs,
   }
   console.log("DB: ", mockDB);
   res.render("signup", templateVars);
@@ -61,16 +96,16 @@ app.get("/signup", (req, res) => {
 
 app.post("/signup", (req, res) => {
   let fields = ["username", "password", "first_name", "last_name", "phone_number"]
-  let field_errs = [];
+  let signup_field_errs = [];
   for(field of fields){
     if(! req.body[field]){
       let formattedField = prettyFormatFormField(field);
-      field_errs.push(formattedField);
+      signup_field_errs.push(formattedField);
     }
   }
-  req.session.field_errs = field_errs;
+  req.session.signup_field_errs = signup_field_errs;
   //one or more fields failed so we need to redirect back to signup
-  if(field_errs.length > 0){
+  if(signup_field_errs.length > 0){
     res.redirect("/signup");
   //success - push the new user into the database and redirect to home page
   }else{

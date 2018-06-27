@@ -1,10 +1,10 @@
-.signup-container{
+.auth-container{
   background:white;
   padding:2em 2em 2em 2em;
   margin-top:30px;
   box-shadow:-1px 1px 1px #333333;
 
-  .sign-up-button{
+  .auth-button{
     font-size:1.5em;
     margin:0 auto 0 auto;
     border:none;
@@ -19,7 +19,7 @@
     margin:0 auto 1em auto;
     }
 
-  .err-container{
+  .auth-err-container{
 
     margin:0.5em auto 0 auto;
     text-align:center;
@@ -28,7 +28,7 @@
       font-size:1em;
     }
 
-    .signup-err-msg{
+    .auth-err-msg{
       color:red;
       font-size:0.75em
     }

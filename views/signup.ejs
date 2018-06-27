@@ -7,7 +7,7 @@
     <% include partials/_nav %>
 
     <section class="full-width-flex">
-      <div class="signup-container">
+      <div class="auth-container">
         <form action="/signup" method="POST">
           <label for="username" aria-label="username"></label>
           <input type="text" name="username" placeholder="Username">
@@ -19,14 +19,14 @@
           <input type="text" name="last_name" placeholder="Last Name">
           <label for="phone_number" aria-label="phone number"></label>
           <input type="text" name="phone_number" placeholder="Phone Number">
-          <input class="sign-up-button" type="submit" value="Sign Up">
+          <input class="auth-button" type="submit" value="Sign Up">
         </form>
 
-        <% if(field_errs){ %>
-          <div class="err-container">
+        <% if(signup_field_errs){ %>
+          <div class="auth-err-container">
             <h4>Please enter:</h4>
-            <% for(err of field_errs){ %>
-              <div class="signup-err-msg">
+            <% for(err of signup_field_errs){ %>
+              <div class="auth-err-msg">
                 <%= `${err} `%>
               </div>
             <% } %>
