@@ -47,35 +47,69 @@ let prettyFormatFormField = (field_val) => {
 }
 
 app.get("/", (req, res) => {
-  let templateVars;
+  let login_field_errs;
   if(req.session.login_field_errs){
-    templateVars.login_field_errs = req.session.login_field_errs;
+    login_field_errs = req.session.login_field_errs;
     req.session.login_field_errs = null;
   }
 
+  let templateVars = {
+    login_field_errs:login_field_errs
+  };
   res.render("index", templateVars);
 });
 
 app.get("/login", (req, res) => {
+  //login_field_errs represent missing fields - login validation errors represent some kind of authentication failure
+  let login_field_errs;
+  let login_validation_err;
+  if(req.session.login_field_errs){
+    login_field_errs = req.session.login_field_errs;
+    req.session.login_field_errs = null;
+  }
+  if(req.session.login_validation_err){
+    login_validation_err = req.session.login_validation_err;
+    req.session.login_validation_err = null;
+  }
 
-  res.render("login")
+  let templateVars = {
+    login_field_errs:login_field_errs,
+    login_validation_err: login_validation_err
+  }
+  res.render("login", templateVars)
 })
 
 app.post("/login", (req,res) => {
   let username = req.body.username;
   let password = req.body.password;
+  console.log(req.body)
 
   //check that post request contains a username and password
   let login_field_errs = [];
   if(! username) login_field_errs.push("Username");
   if(! password) login_field_errs.push("Password");
+
+  //login contains missing fields
   if(login_field_errs.length > 0){
     req.session.login_field_errs = login_field_errs;
-    res.redirect("/");
+    res.redirect("/login");
   }else{
-    validatePassword(db, req.body.username, req.body.password)
-    req.session.username = username;
-    res.redirect("/");
+    //if username doesn't exist in db
+    if(! mockDB.users[username]){
+      req.session.login_validation_err = "Username Does Not Exist";
+      res.redirect("/login");
+    //usename exists so now check if passwords match
+    }else{
+      if(validatePassword(mockDB, req.body.username, req.body.password)){
+        req.session.username = username;
+        res.redirect("/");
+
+      //incorrect password
+      }else{
+        req.session.login_validation_err = "Incorrect Username Or Password";
+        res.redirect("/login");
+      }
+    }
   }
 })
 
