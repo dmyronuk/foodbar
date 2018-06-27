@@ -9,6 +9,9 @@ const bcrypt = require("bcrypt")
 
 const pg = require("pg");
 const knex = require("./db/create-knex-client.js");
+const mockDB = {
+  users:{}
+};
 
 app.use(cookieSession({
   name: "session",
@@ -52,7 +55,7 @@ app.get("/signup", (req, res) => {
   let templateVars = {
     field_errs:field_errs,
   }
-
+  console.log("DB: ", mockDB);
   res.render("signup", templateVars);
 });
 
@@ -69,8 +72,16 @@ app.post("/signup", (req, res) => {
   //one or more fields failed so we need to redirect back to signup
   if(field_errs.length > 0){
     res.redirect("/signup");
+  //success - push the new user into the database and redirect to home page
   }else{
-    res.status.redirect("/");
+    mockDB.users[req.body.username] = {
+      username: req.body.username,
+      password: bcrypt.hashSync(req.body.password, 10),
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      phone_number: req.body.phone_number,
+    }
+    res.redirect("/");
   }
 });
 
