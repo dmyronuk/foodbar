@@ -1,1 +1,1 @@
-body{background:lightblue}
+.nav-top{font-family:Helvetica;display:flex;flex-direction:row;justify-content:space-between;align-items:center;width:100%;background:black;color:white;padding:1rem}.nav-top h1{font-size:4em;font-weight:bold}.nav-top div{line-height:100%;vertical-align:middle}.nav-top .nav-right div{display:inline-block}.nav-top .nav-right img{height:3em;width:3em}.nav-top .nav-right button{display:block;border-radius:5px;background:red;color:white;border:none;padding:5px 0px 5px 0px;margin:0.5rem;width:6em}body{background:lightblue}
