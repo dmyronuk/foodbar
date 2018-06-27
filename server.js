@@ -54,6 +54,7 @@ app.get("/", (req, res) => {
   }
 
   let templateVars = {
+    username:req.session.username,
     login_field_errs:login_field_errs
   };
   res.render("index", templateVars);
@@ -73,7 +74,8 @@ app.get("/login", (req, res) => {
   }
 
   let templateVars = {
-    login_field_errs:login_field_errs,
+    username: req.session.username,
+    login_field_errs: login_field_errs,
     login_validation_err: login_validation_err
   }
   res.render("login", templateVars)
@@ -100,6 +102,7 @@ app.post("/login", (req,res) => {
       res.redirect("/login");
     //usename exists so now check if passwords match
     }else{
+      //login success
       if(validatePassword(mockDB, req.body.username, req.body.password)){
         req.session.username = username;
         res.redirect("/");
@@ -122,6 +125,7 @@ app.get("/signup", (req, res) => {
     req.session.signup_field_errs = null;
   }
   let templateVars = {
+    username:req.session.username,
     signup_field_errs:signup_field_errs,
   }
   console.log("DB: ", mockDB);
@@ -150,6 +154,7 @@ app.post("/signup", (req, res) => {
       last_name: req.body.last_name,
       phone_number: req.body.phone_number,
     }
+    req.session.username = req.body.username;
     res.redirect("/");
   }
 });

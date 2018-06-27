@@ -1,5 +1,9 @@
 <div class="nav-top">
-  <div>Signed In As Username</div>
+  <div class="nav-left">
+    <% if(username){ %>
+      <%= `Signed in as ${username}` %>
+    <% } %>
+  </div>
   <div>
     <a href="/">
       <h1>Title</h1>
