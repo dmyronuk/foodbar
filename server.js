@@ -24,6 +24,15 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+app.get("/signup", (req, res) => {
+  res.render("signup");
+});
+
+app.post("/signup", (req, res) => {
+  console.log("User posted to signup")
+  res.status(301).redirect("/");
+});
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
