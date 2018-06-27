@@ -6,6 +6,10 @@ const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
+const Chat = require('twilio-chat');
+Chat.Client.create(token).then(client => {
+    // Use client
+});
 
 const pg = require("pg");
 const knex = require("./db/create-knex-client.js")
@@ -19,6 +23,20 @@ app.use(nodeSassMiddleware({
     outputStyle: "compressed",
 }));
 app.use(express.static(path.join(__dirname, "./public")));
+
+/*-----Twilio--------*/
+const accountSid = 'ACe8fda14d2cd2d5b6997bd8a1e08bf9c5';
+const authToken = '45af4770f7b92c3f50676cb3d2b34154';//twilio_token = require('./twilio_token')
+// require the Twilio module and create a REST client
+const client = require('twilio')(accountSid, authToken);
+client.messages
+  .create({
+    to: "+16475376750",
+    from: "+13069940672",
+    body: "Tomorrow's forecast in Financial District, San Francisco is Clear",
+    mediaUrl: 'https://climacons.herokuapp.com/clear.png',
+  })
+  .then((message) => console.log(message.sid));
 
 app.get("/", (req, res) => {
   res.render("index");
