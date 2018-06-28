@@ -20,6 +20,12 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
+const tokens = require('./twilio_token')
+const accountSid = 'ACe8fda14d2cd2d5b6997bd8a1e08bf9c5';
+const authToken = tokens.TWILIO_TOKEN
+const twilioClient = require('twilio')(accountSid, authToken);//send a message
+const client = require('twilio')(accountSid, authToken);//send a message
+
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(nodeSassMiddleware({
@@ -30,6 +36,18 @@ app.use(nodeSassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, "./public")));
 
+/*-----Twilio--------*/
+app.post('/sms', (req, res) => {
+  twilioClient.messages
+  .create({
+     body: `Hello ${knex.select('first_name').from('customer')}! The order for ${orderNumber} has been received at ${Date.now()}. Your total is ${req.body.total} and your food will arrive in ${knex.select('arrival_time').from('order')}.`,
+     from: '+13069940672',
+     to: '+16475376750'
+   })
+  .then(message => console.log(message.sid))
+  .done();
+  res.redirect('/')
+});
 
 const validatePassword = (db, username, plaintextPassword) => {
   let hashedPassword = db.users[username]["password"];
