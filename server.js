@@ -28,7 +28,6 @@ app.use(express.static(path.join(__dirname, "./public")));
 
 /*-----Twilio--------*/
 app.post('/sms', (req, res) => {
-<<<<<<< HEAD
   twilioClient.messages
   .create({
      body: `Hello ${knex.select('first_name').from('customer')}! The order for ${orderNumber} has been received at ${Date.now()}. Your total is ${req.body.total} and your food will arrive in ${knex.select('arrival_time').from('order')}.`,
