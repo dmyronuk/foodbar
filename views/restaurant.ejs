@@ -9,10 +9,42 @@
 
     <div class="flex-row-container">
       <div class="default-mid-container">
-        <div class="server-err-container">
-          <%= name %>
-          <%= address %>
-          <%= phone_number %>
+        <div class="restaurant-main-container">
+          <header>
+            <div>
+              <img src="/images/stock-logo.jpeg"/>
+            </div>
+            <div>
+              <div>
+                <h2><%= name %></h2>
+              </div>
+              <div>
+                <h4><%= address %></h4>
+              </div>
+              <div>
+                <h4><%= phone_number %></h4>
+              </div>
+          </header>
+
+          <section>
+            <h3>
+              Select A Menu:
+            </h3>
+
+            <div>
+              <div class="menu-img-container">
+                <h5>
+                  Lunch
+                </h5>
+                <img src="/images/burger.jpg"/>
+              </div>
+              <div class="menu-img-container">
+                <h5>Dinner</h5>
+                <img src="/images/pasta.jpeg" />
+              </div>
+            </div>
+
+          </section>
         </div>
       </div>
     </div>
