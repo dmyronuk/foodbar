@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include partials/_head %>
+  </head>
+  <body>
+    <% include partials/_nav %>
+
+    <section class="flex-row-container">
+        <div class="auth-container">
+          <% if(login_validation_err){ %>
+            <div class="auth-err-container">
+              <div class="auth-err-msg">
+                <%= login_validation_err %>
+              </div>
+            </div>
+          <% } %>
+
+          <form action="/login" method="POST">
+            <label for="username" aria-label="username"></label>
+            <input type="text" name="username" placeholder="Username">
+            <label for="password" aria-label="password"></label>
+            <input type="password" name="password" placeholder="Password">
+            <input class="auth-button" type="submit" value="Login">
+          </form>
+
+          <% if(login_field_errs){ %>
+            <div class="auth-err-container">
+              <h4>Please enter:</h4>
+              <% for(err of login_field_errs){ %>
+                <div class="auth-err-msg">
+                  <%= `${err} `%>
+                </div>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+    </section>
+
+  </body>
+</html>
