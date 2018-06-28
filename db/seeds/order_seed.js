@@ -31,27 +31,28 @@ exports.seed = function(knex, Promise) {
   }
 
   function deleteCategory(){
-    return knex("login").del()
+    return knex("category").del()
   }
 
   function deleteLogin(){
     return knex("login").del()
   }
 
-
-
-
-
   function insertLogin(){
     return knex("login").insert([
       {
-        email: "user@gmail.com",
+        email: "user1@gmail.com",
         password: "z"
       },
       {
-        email: "user@gmail.com",
+        email: "user2@gmail.com",
         password: "z"
       },
+      {
+        email: "restaurant@gmail.com",
+        password: "z"
+      },
+
     ]).returning("*")
   }
 
@@ -63,17 +64,32 @@ exports.seed = function(knex, Promise) {
     ]).returning("*")
   }
 
-  function insertCustomer(){
+  function insertCustomer(login){
+    console.log(login[0].login_id);
     return knex("customer").insert([
     {
-      
+      login_id: login[0].login_id,
+      first_name: "User",
+      last_name: "One",
+      phone_number: "6476096899"
+    },
+    {
+      login_id: login[1].login_id,
+      first_name: "User",
+      last_name: "Two",
+      phone_number: "6476096899"
     }
     ]).returning("*")
   }
 
-  function insertRestaurant(){
+  function insertRestaurant(login){
     return knex("restaurant").insert([
-
+    {
+      login_id: login[2].id,
+      name: "Food",
+      address: "46 Spadina Ave",
+      phone_number: "6476096899", 
+    }
     ]).returning("*")
   }
 
@@ -107,10 +123,6 @@ exports.seed = function(knex, Promise) {
     ]).returning("*")
   }
 
-
-
-
-
   return deleteOrderLine()
     .then(deleteOrder)
     .then(deleteMenuItem)
@@ -120,14 +132,7 @@ exports.seed = function(knex, Promise) {
     .then(deleteCustomer)
     .then(deleteCategory)
     .then(deleteLogin)
-    .then()
-    .then()
-    .then()
-    .then()
-    .then()
-    .then()
-    .then()
-    .then()
-    .then()
-    .then();
+    .then(insertCategory)
+    .then(insertLogin)
+    .then(login => insertCustomer(login).then(() => insertRestaurant(login)))
 };
