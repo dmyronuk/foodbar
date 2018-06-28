@@ -29,7 +29,6 @@ exports.up = function(knex, Promise) {
       table.increments("customer_id").unsigned().primary();
       table.integer("login_id").unsigned();
       table.foreign("login_id").references("login.login_id");
-      table.string("email");
       table.string("first_name");
       table.string("last_name");
       table.string("phone_number");
