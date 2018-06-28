@@ -74,9 +74,9 @@
 
     .auth-button{
       display:block;
-      border-radius:5px;
-      background:red;
-      color:white;
+      border-radius:$default-button-border-radius;
+      background:$default-button-color;
+      color:$default-button-text-color;
       border:none;
       padding:0.5rem 0 0.5rem 0;
       margin:0.5rem;
