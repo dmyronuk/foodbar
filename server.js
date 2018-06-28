@@ -36,7 +36,6 @@ app.use(nodeSassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, "./public")));
 
-<<<<<<< HEAD
 /*-----Twilio--------*/
 app.post('/sms', (req, res) => {
   twilioClient.messages
@@ -49,8 +48,6 @@ app.post('/sms', (req, res) => {
   .done();
   res.redirect('/')
 });
-
-=======
 
 const validatePassword = (db, username, plaintextPassword) => {
   let hashedPassword = db.users[username]["password"];
@@ -66,7 +63,6 @@ let prettyFormatFormField = (field_val) => {
   }, "")
   return outStr.trim();
 }
->>>>>>> 24f552cf3e6d9236ed82dfc648055ae98cb97133
 
 app.get("/", (req, res) => {
   let login_field_errs;
