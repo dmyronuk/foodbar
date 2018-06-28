@@ -6,8 +6,9 @@
 }
 
 .default-mid-container{
+  z-index:50;
+  position:relative;
   width: $default-mid-width;
-  height:100%;
-  background:$default-mid-background;
+  height:100vh;
 }
 

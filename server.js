@@ -10,7 +10,14 @@ const bcrypt = require("bcrypt")
 const pg = require("pg");
 const knex = require("./db/knexfile.js");
 const mockDB = {
-  users:{}
+  users:{},
+  restaurants:{
+    1:{
+      name: "Great Restaurant",
+      address: "10 Drury Lane",
+      phone_number: "444-444-4444",
+    }
+  }
 };
 
 app.use(cookieSession({
@@ -78,6 +85,27 @@ app.get("/", (req, res) => {
   };
   res.render("index", templateVars);
 });
+
+app.get("/404", (req, res) => {
+  let templateVars = {
+    email:req.session.email,
+    first_name:req.session.first_name,
+  };
+  res.render("404", templateVars);
+});
+
+app.get("/restaurants/:id", (req, res) => {
+  let restaurantId = req.params.id;
+
+  if(mockDB.restaurants[restaurantId]){
+    let templateVars = mockDB.restaurants[restaurantId];
+    templateVars.email = req.session.email;
+    templateVars.first_name = req.session.first_name;
+    res.render("restaurant", templateVars);
+  }else{
+    res.status(404).redirect("/404");
+  }
+})
 
 app.get("/login", (req, res) => {
   //login_field_errs represent missing fields - login validation errors represent some kind of authentication failure
