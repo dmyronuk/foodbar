@@ -20,13 +20,15 @@ const mockDB = {
   },
   items:[
     {
+      id:99,
       name:"Hamburger",
       description:"Ethical you probably haven't heard of them flannel chia health goth lumbersexual twee fingerstache keffiyeh polaroid.",
       price:"10.99",
       imageURL:"/images/burger-2.jpg",
       prep_time:10
     },
-  ]
+  ],
+  cart:[]
 };
 
 app.use(cookieSession({
@@ -124,6 +126,35 @@ app.get("/restaurants/:id", (req, res) => {
   }else{
     res.status(404).redirect("/404");
   }
+})
+
+app.post("/items/:id", (req, res) => {
+  let item_id_exists = true // once db hooked up, check that item exists in db
+  if(item_id_exists){
+    mockDB.cart.push(req.params.id);
+    res.json({status:"success"})
+  }else{
+    res.json({status:"failed"})
+  }
+})
+
+//view all items in cart before checkout
+app.get("/cart", (req, res) => {
+
+  //if user is logged in
+  if(req.session.email){
+    let items = mockDB.cart;
+    res.json(items);
+
+  //else forbidden, user is not logged in
+  }else{
+    res.status(403);
+  }
+})
+
+//confirm checkout -- twilio db stuff and twilio text goes in here
+app.post("/cart", (req, res) => {
+
 })
 
 app.get("/login", (req, res) => {
