@@ -1,8 +1,8 @@
 <div class="nav-top">
   <div class="smoked-glass"></div>
   <div class="nav-left">
-    <% if(username){ %>
-      <%= `Signed in as ${username}` %>
+    <% if(email){ %>
+      <%= `Signed in as ${first_name}` %>
     <% } %>
   </div>
   <div>
@@ -12,7 +12,7 @@
   </div>
   <div class="nav-right">
     <div>
-      <% if(username) { %>
+      <% if(email) { %>
         <div class="cart-button">
           <img src="images/cart.png" />
         </div>

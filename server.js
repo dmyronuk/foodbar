@@ -49,8 +49,8 @@ app.post('/sms', (req, res) => {
   res.redirect('/')
 });
 
-const validatePassword = (db, username, plaintextPassword) => {
-  let hashedPassword = db.users[username]["password"];
+const validatePassword = (db, email, plaintextPassword) => {
+  let hashedPassword = db.users[email]["password"];
   return bcrypt.compareSync(plaintextPassword, hashedPassword);
 };
 
@@ -72,7 +72,8 @@ app.get("/", (req, res) => {
   }
 
   let templateVars = {
-    username:req.session.username,
+    email:req.session.email,
+    first_name:req.session.first_name,
     login_field_errs:login_field_errs
   };
   res.render("index", templateVars);
@@ -92,7 +93,8 @@ app.get("/login", (req, res) => {
   }
 
   let templateVars = {
-    username: req.session.username,
+    email: req.session.email,
+    first_name: req.session.first_name,
     login_field_errs: login_field_errs,
     login_validation_err: login_validation_err
   }
@@ -100,13 +102,13 @@ app.get("/login", (req, res) => {
 })
 
 app.post("/login", (req,res) => {
-  let username = req.body.username;
+  let email = req.body.email;
   let password = req.body.password;
   console.log(req.body)
 
-  //check that post request contains a username and password
+  //check that post request contains an email and password
   let login_field_errs = [];
-  if(! username) login_field_errs.push("Username");
+  if(! email) login_field_errs.push("Email");
   if(! password) login_field_errs.push("Password");
 
   //login contains missing fields
@@ -115,19 +117,20 @@ app.post("/login", (req,res) => {
     res.redirect("/login");
   }else{
     //if username doesn't exist in db
-    if(! mockDB.users[username]){
-      req.session.login_validation_err = "Username Does Not Exist";
+    if(! mockDB.users[email]){
+      req.session.login_validation_err = "Login Does Not Exist";
       res.redirect("/login");
     //usename exists so now check if passwords match
     }else{
       //login success
-      if(validatePassword(mockDB, req.body.username, req.body.password)){
-        req.session.username = username;
+      if(validatePassword(mockDB, req.body.email, req.body.password)){
+        req.session.email = email;
+        req.session.first_name = req.body.first_name;
         res.redirect("/");
 
       //incorrect password
       }else{
-        req.session.login_validation_err = "Incorrect Username Or Password";
+        req.session.login_validation_err = "Incorrect Email Or Password";
         res.redirect("/login");
       }
     }
@@ -143,7 +146,8 @@ app.get("/signup", (req, res) => {
     req.session.signup_field_errs = null;
   }
   let templateVars = {
-    username:req.session.username,
+    email:req.session.email,
+    first_name:req.session.first_name,
     signup_field_errs:signup_field_errs,
   }
   console.log("DB: ", mockDB);
@@ -151,7 +155,7 @@ app.get("/signup", (req, res) => {
 });
 
 app.post("/signup", (req, res) => {
-  let fields = ["username", "password", "first_name", "last_name", "phone_number"]
+  let fields = ["email", "password", "first_name", "last_name", "phone_number"]
   let signup_field_errs = [];
   for(field of fields){
     if(! req.body[field]){
@@ -165,20 +169,22 @@ app.post("/signup", (req, res) => {
     res.redirect("/signup");
   //success - push the new user into the database and redirect to home page
   }else{
-    mockDB.users[req.body.username] = {
-      username: req.body.username,
+    mockDB.users[req.body.email] = {
+      email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10),
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       phone_number: req.body.phone_number,
     }
-    req.session.username = req.body.username;
+    req.session.email = req.body.email;
+    req.session.first_name = req.body.first_name;
     res.redirect("/");
   }
 });
 
 app.post("/logout", (req, res) => {
-  req.session.username = null;
+  req.session.email = null;
+  req.session.first_name = null;
   res.redirect("/");
 })
 
