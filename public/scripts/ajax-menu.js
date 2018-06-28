@@ -1,3 +1,15 @@
+function addMenuItemHandler(event){
+  let item_id = $(event.target).attr("item_id");
+
+  $.ajax({
+    type: "POST",
+    url: `/items/${item_id}`,
+    success: function(data){
+      console.log(data);
+    }
+  })
+}
+
 function createMenuItem(dataRow){
   console.log(dataRow.imageURL)
   let $item = $(`
@@ -13,7 +25,9 @@ function createMenuItem(dataRow){
             ${dataRow.description}
           </div>
           <div>
-            ${dataRow.price}
+            <div>
+              ${dataRow.price}
+            <button item_id=${dataRow.id} class="add-to-cart">Add</button>
           </div>
         </div>
       </div>
@@ -21,8 +35,9 @@ function createMenuItem(dataRow){
   return $item;
 };
 
-function appendMenuItem(item){
-  $(".menu-item-container").append(item);
+function appendMenuItem($item){
+  $item.on("click", addMenuItemHandler);
+  $(".menu-item-container").append($item);
 };
 
 $(document).ready(function(){
@@ -36,11 +51,8 @@ $(document).ready(function(){
     $.ajax({
       type: "GET",
       url: `/menus/${menu_id}`,
-      data: {hi:"yes"},
-      dataType: "json",
       contentType: "application/json",
       success: function(data){
-        console.log(data);
         let $container = $(".menu-item-container");
         $container.empty();
         for(var i=0; i<15; i++){
