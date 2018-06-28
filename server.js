@@ -94,13 +94,26 @@ app.get("/404", (req, res) => {
   res.render("404", templateVars);
 });
 
+app.get("/restaurants/:id/menus/:menu_id", (req, res) => {
+
+  let outData={
+    key:"myfriend"
+  }
+  res.json(outData);
+})
+
 app.get("/restaurants/:id", (req, res) => {
   let restaurantId = req.params.id;
+  let lunch_menu_id = 1;
+  let dinner_menu_id = 2;
 
   if(mockDB.restaurants[restaurantId]){
     let templateVars = mockDB.restaurants[restaurantId];
     templateVars.email = req.session.email;
     templateVars.first_name = req.session.first_name;
+    templateVars.restaurant_id = restaurantId;
+    templateVars.lunch_menu_id = lunch_menu_id;
+    templateVars.dinner_menu_id = dinner_menu_id;
     res.render("restaurant", templateVars);
   }else{
     res.status(404).redirect("/404");
