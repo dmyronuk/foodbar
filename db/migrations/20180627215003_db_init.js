@@ -63,11 +63,11 @@ exports.up = function(knex, Promise) {
       table.increments("item_id").unsigned().primary();
       table.integer("category_id").unsigned();
       table.foreign("category_id").references("category.category_id");
-      table.integer("price").unsigned();
-      table.integer("prep_time").unsigned();
       table.string("name");
+      table.integer("price").unsigned();
       table.string("description");
       table.string("url");
+      table.integer("prep_time").unsigned();
     });
   };
 
@@ -78,6 +78,8 @@ exports.up = function(knex, Promise) {
       table.integer("menu_id").unsigned();
       table.foreign("item_id").references("item.item_id");
       table.foreign("menu_id").references("menu.menu_id");
+      table.string("menu_name");
+      table.string("item_name");
     });
   };
 
