@@ -17,7 +17,16 @@ const mockDB = {
       address: "10 Drury Lane",
       phone_number: "444-444-4444",
     }
-  }
+  },
+  items:[
+    {
+      name:"Hamburger",
+      description:"Ethical you probably haven't heard of them flannel chia health goth lumbersexual twee fingerstache keffiyeh polaroid.",
+      price:"10.99",
+      imageURL:"/images/burger-2.jpg",
+      prep_time:10
+    },
+  ]
 };
 
 app.use(cookieSession({
@@ -94,11 +103,9 @@ app.get("/404", (req, res) => {
   res.render("404", templateVars);
 });
 
-app.get("/restaurants/:id/menus/:menu_id", (req, res) => {
+app.get("/menus/:menu_id", (req, res) => {
 
-  let outData={
-    key:"myfriend"
-  }
+  let outData = mockDB.items[0];
   res.json(outData);
 })
 
@@ -111,7 +118,6 @@ app.get("/restaurants/:id", (req, res) => {
     let templateVars = mockDB.restaurants[restaurantId];
     templateVars.email = req.session.email;
     templateVars.first_name = req.session.first_name;
-    templateVars.restaurant_id = restaurantId;
     templateVars.lunch_menu_id = lunch_menu_id;
     templateVars.dinner_menu_id = dinner_menu_id;
     res.render("restaurant", templateVars);

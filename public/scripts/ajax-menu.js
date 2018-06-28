@@ -1,21 +1,52 @@
+function createMenuItem(dataRow){
+  console.log(dataRow.imageURL)
+  let $item = $(`
+      <div class="menu-item">
+        <div>
+          <img src=${dataRow.imageURL}>
+        </div>
+        <div class="item-description-container">
+          <h4>
+            ${dataRow.name}
+          </h4>
+          <div>
+            ${dataRow.description}
+          </div>
+          <div>
+            ${dataRow.price}
+          </div>
+        </div>
+      </div>
+    `)
+  return $item;
+};
+
+function appendMenuItem(item){
+  $(".menu-item-container").append(item);
+};
+
 $(document).ready(function(){
   console.log("hello");
 
   $(".menu_img").on("click", function(event){
     let $target = $(event.target);
-    var menu_name = $target.attr("menu_name");
-    var restaurant_id = $target.attr("restaurant_id");
-    console.log("trying to send")
+    var menu_id = $target.attr("menu_id");
+    console.log("menu_id: ", menu_id);
 
     $.ajax({
       type: "GET",
-      url: `/restaurants/${restaurant_id}/menus/${menu_name}`,
+      url: `/menus/${menu_id}`,
       data: {hi:"yes"},
       dataType: "json",
       contentType: "application/json",
       success: function(data){
-        console.log("Ajax sent okay")
         console.log(data);
+        let $container = $(".menu-item-container");
+        $container.empty();
+        for(var i=0; i<15; i++){
+          let $curItem = createMenuItem(data);
+          appendMenuItem($curItem);
+        }
        }
     })
   })
