@@ -8,7 +8,16 @@ const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
 
 const pg = require("pg");
-const knex = require("./db/knexfile.js");
+const settings = require('./db/settings')
+const knex = require('knex')({
+  client: 'pg',
+  connection: {
+    host : settings.hostname,
+    user : settings.user,
+    password : settings.password,
+    database : settings.database
+  }
+});
 const mockDB = {
   users:{},
   restaurants:{
@@ -247,13 +256,36 @@ app.post("/signup", (req, res) => {
     res.redirect("/signup");
   //success - push the new user into the database and redirect to home page
   }else{
-    mockDB.users[req.body.email] = {
+    // mockDB.users[req.body.email] = {
+    //   email: req.body.email,
+    //   password: bcrypt.hashSync(req.body.password, 10),
+    //   first_name: req.body.first_name,
+    //   last_name: req.body.last_name,
+    //   phone_number: req.body.phone_number,
+    // }
+    // knex('customer').join('login', 'login.login_id', '=', 'customer.login_id').insert({
+    //   email: req.body.email,
+    //   password: bcrypt.hashSync(req.body.password, 10),
+    //   first_name: req.body.first_name,
+    //   last_name: req.body.last_name,
+    //   phone_number: req.body.phone_number,
+    // }).asCallback()
+    knex('login').insert({
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10),
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      phone_number: req.body.phone_number,
+    }).then(insertCustomer).asCallback()
+
+    function insertCustomer(){
+     return knex('login').select().then (result => {
+        knex('customer').insert({
+          first_name: req.body.first_name,
+          last_name: req.body.last_name,
+          phone_number: req.body.phone_number,
+          login_id: result[result.length - 1].login_id
+        }).asCallback()
+      })
     }
+
     req.session.email = req.body.email;
     req.session.first_name = req.body.first_name;
     res.redirect("/");
