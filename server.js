@@ -14,6 +14,7 @@ const tokens = require('./twilio_token')
 const accountSid = 'ACe8fda14d2cd2d5b6997bd8a1e08bf9c5';
 const authToken = tokens.TWILIO_TOKEN
 const twilioClient = require('twilio')(accountSid, authToken);//send a message
+const client = require('twilio')(accountSid, authToken);//send a message
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, "./public")));
 
 /*-----Twilio--------*/
 app.post('/sms', (req, res) => {
+<<<<<<< HEAD
   twilioClient.messages
   .create({
      body: `Hello ${knex.select('first_name').from('customer')}! The order for ${orderNumber} has been received at ${Date.now()}. Your total is ${req.body.total} and your food will arrive in ${knex.select('arrival_time').from('order')}.`,

@@ -6,6 +6,9 @@
   <body>
     <% include partials/_nav %>
 
-    Hello World!
+    <form id="cart" action="/sms" method="POST">
+      <input type="text" name="name" value="+">
+      <input type="submit" value="Submit">
+    </form>
   </body>
 </html>

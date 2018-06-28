@@ -20,6 +20,7 @@
     "node-sass-middleware": "^0.11.0",
     "path": "^0.12.7",
     "pg": "^7.4.3",
+    "twilio": "^3.17.4",
     "twilio-chat": "^3.0.1"
   }
 }
