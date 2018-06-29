@@ -12,7 +12,8 @@ const knex = require('knex')({
 module.exports = {
   insertIntoLogins,
   insertIntoCustomers,
-  selectMenusFromRestaurants
+  selectMenusFromRestaurants,
+  selectItemsFromMenus
 }
 
 function insertIntoLogins(obj) {
