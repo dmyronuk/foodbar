@@ -126,24 +126,36 @@ app.get("/menus/:menu_id", (req, res) => {
 //once in this route, it should behave like a single page application - lots of ajax
 app.get("/restaurants/:id", (req, res) => {
   let restaurantId = req.params.id;
-  let lunch_menu_id = 1;
-  let dinner_menu_id = 2;
 
-  if(mockDB.restaurants[restaurantId]){
-    let templateVars = mockDB.restaurants[restaurantId];
-    templateVars.email = req.session.email;
-    templateVars.first_name = req.session.first_name;
-    templateVars.lunch_menu_id = lunch_menu_id;
-    templateVars.dinner_menu_id = dinner_menu_id;
-    res.render("restaurant", templateVars);
-  }else{
-    res.status(404).redirect("/404");
-  }
+  queries.selectMenusFromRestaurants(restaurantId).then(menus => {
+    //if search finds any menus
+    if(menus.length > 0){
+      let menusObj = menus.reduce((acc, cur) => {
+        let key = cur.name.toLowerCase() + "_menu_id";
+        acc[key] = cur.menu_id;
+        return acc;
+      }, {})
+
+      res.render("restaurant", {
+        menusObj: menusObj,
+        email: req.session.email,
+        first_name: req.session.first_name,
+      });
+
+    //else no menus -- 404
+    }else{
+      res.status(404).redirect("/404");
+    }
+  })
 })
 
+//delete item from logged-in user cart
+app.post("/cart/items/:id/delete", (req, res) => {
+  console.log("deleting item from cart")
+});
 
-//add item to logged in user cart
-app.post("/items/:id", (req, res) => {
+//add item to logged-in user cart
+app.post("/cart/items/:id", (req, res) => {
   let item_id_exists = true // once db hooked up, check that item exists in db
   let id = req.params.id;
   let quantity = req.body.quantity;
@@ -158,7 +170,8 @@ app.post("/items/:id", (req, res) => {
   }else{
     res.json({status:"failed"})
   }
-})
+});
+
 
 //view all items in cart before checkout
 app.get("/cart", (req, res) => {

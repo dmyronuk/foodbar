@@ -1,3 +1,4 @@
+//Ajax post to add clicked item to user's cart
 function addMenuItemHandler(event){
   event.preventDefault();
   var $target = $(event.target);
@@ -6,7 +7,7 @@ function addMenuItemHandler(event){
   $.ajax({
     type: "POST",
     data: $target.serialize(),
-    url: `/items/${id}`,
+    url: `/cart/items/${id}`,
     success: function(data){
       console.log("data sent back from server: ", data);
     }
