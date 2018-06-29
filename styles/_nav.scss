@@ -31,6 +31,7 @@
 
   button{
     cursor:pointer;
+    transition:background-color 1s;
   }
 
   h1{
@@ -63,25 +64,32 @@
 
     .cart-button{
       border-radius:5px;
-      background:#eeeeee;
+      background-color:#eeeeee;
       color:white;
       border:none;
       padding:0.1rem 0 0.1rem 0;
       margin:0.5rem;
       width: 6em;
       cursor:pointer;
+      &:hover{
+        background-color:#ffffff;
+      }
     }
 
     .auth-button{
       display:block;
-      border-radius:5px;
-      background:red;
-      color:white;
+      border-radius:$default-button-border-radius;
+      background-color:$default-button-color;
+      color:$default-button-text-color;
       border:none;
       padding:0.5rem 0 0.5rem 0;
       margin:0.5rem;
       width: 6rem;
       cursor:pointer;
+      transition:background-color 1s;
+      &:hover{
+        background-color:$default-button-hover-color;
+      }
     }
   }
 }

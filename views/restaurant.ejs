@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include partials/_head %>
+    <script src="/scripts/ajax-menu.js"></script>
+  </head>
+  <body>
+    <% include partials/_nav %>
+    <% include partials/_main-bg-img %>
+
+    <div class="flex-row-container">
+      <div class="default-mid-container">
+        <div class="restaurant-main-container">
+          <header>
+            <div>
+              <img src="/images/stock-logo.jpeg"/>
+            </div>
+            <div>
+              <div>
+                <h2><%= name %></h2>
+              </div>
+              <div>
+                <h4><%= address %></h4>
+              </div>
+              <div>
+                <h4><%= phone_number %></h4>
+              </div>
+          </header>
+
+          <section class="menu-item-container">
+            <h3>
+              Select A Menu:
+            </h3>
+
+            <div>
+              <div class="menu-img-container">
+                <h5>
+                  Lunch
+                </h5>
+                <img class="menu_img" menu_id="<%= lunch_menu_id %>" src="/images/burger.jpg"/>
+              </div>
+
+              <div class="menu-img-container">
+                <h5>
+                  Dinner
+                </h5>
+                <img class="menu_img" menu_id="<%= dinner_menu_id %>" src="/images/pasta.jpeg" />
+              </div>
+            </div>
+
+          </section>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

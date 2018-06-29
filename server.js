@@ -8,9 +8,36 @@ const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
 
 const pg = require("pg");
-const knex = require("./db/knexfile.js");
+const settings = require('./db/settings')
+const knex = require('knex')({
+  client: 'pg',
+  connection: {
+    host : settings.hostname,
+    user : settings.user,
+    password : settings.password,
+    database : settings.database
+  }
+});
 const mockDB = {
-  users:{}
+  users:{},
+  restaurants:{
+    1:{
+      name: "Great Restaurant",
+      address: "10 Drury Lane",
+      phone_number: "444-444-4444",
+    }
+  },
+  items:[
+    {
+      id:99,
+      name:"Hamburger",
+      description:"Ethical you probably haven't heard of them flannel chia health goth lumbersexual twee fingerstache keffiyeh polaroid.",
+      price:"10.99",
+      imageURL:"/images/burger-2.jpg",
+      prep_time:10
+    },
+  ],
+  cart:[]
 };
 
 app.use(cookieSession({
@@ -78,6 +105,66 @@ app.get("/", (req, res) => {
   };
   res.render("index", templateVars);
 });
+
+app.get("/404", (req, res) => {
+  let templateVars = {
+    email:req.session.email,
+    first_name:req.session.first_name,
+  };
+  res.render("404", templateVars);
+});
+
+app.get("/menus/:menu_id", (req, res) => {
+
+  let outData = mockDB.items[0];
+  res.json(outData);
+})
+
+app.get("/restaurants/:id", (req, res) => {
+  let restaurantId = req.params.id;
+  let lunch_menu_id = 1;
+  let dinner_menu_id = 2;
+
+  if(mockDB.restaurants[restaurantId]){
+    let templateVars = mockDB.restaurants[restaurantId];
+    templateVars.email = req.session.email;
+    templateVars.first_name = req.session.first_name;
+    templateVars.lunch_menu_id = lunch_menu_id;
+    templateVars.dinner_menu_id = dinner_menu_id;
+    res.render("restaurant", templateVars);
+  }else{
+    res.status(404).redirect("/404");
+  }
+})
+
+app.post("/items/:id", (req, res) => {
+  let item_id_exists = true // once db hooked up, check that item exists in db
+  if(item_id_exists){
+    mockDB.cart.push(req.params.id);
+    res.json({status:"success"})
+  }else{
+    res.json({status:"failed"})
+  }
+})
+
+//view all items in cart before checkout
+app.get("/cart", (req, res) => {
+
+  //if user is logged in
+  if(req.session.email){
+    let items = mockDB.cart;
+    res.json(items);
+
+  //else forbidden, user is not logged in
+  }else{
+    res.status(403);
+  }
+})
+
+//confirm checkout -- twilio db stuff and twilio text goes in here
+app.post("/cart", (req, res) => {
+
+})
 
 app.get("/login", (req, res) => {
   //login_field_errs represent missing fields - login validation errors represent some kind of authentication failure
@@ -169,13 +256,36 @@ app.post("/signup", (req, res) => {
     res.redirect("/signup");
   //success - push the new user into the database and redirect to home page
   }else{
-    mockDB.users[req.body.email] = {
+    // mockDB.users[req.body.email] = {
+    //   email: req.body.email,
+    //   password: bcrypt.hashSync(req.body.password, 10),
+    //   first_name: req.body.first_name,
+    //   last_name: req.body.last_name,
+    //   phone_number: req.body.phone_number,
+    // }
+    // knex('customer').join('login', 'login.login_id', '=', 'customer.login_id').insert({
+    //   email: req.body.email,
+    //   password: bcrypt.hashSync(req.body.password, 10),
+    //   first_name: req.body.first_name,
+    //   last_name: req.body.last_name,
+    //   phone_number: req.body.phone_number,
+    // }).asCallback()
+    knex('login').insert({
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10),
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      phone_number: req.body.phone_number,
+    }).then(insertCustomer).asCallback()
+
+    function insertCustomer(){
+     return knex('login').select().then (result => {
+        knex('customer').insert({
+          first_name: req.body.first_name,
+          last_name: req.body.last_name,
+          phone_number: req.body.phone_number,
+          login_id: result[result.length - 1].login_id
+        }).asCallback()
+      })
     }
+
     req.session.email = req.body.email;
     req.session.first_name = req.body.first_name;
     res.redirect("/");

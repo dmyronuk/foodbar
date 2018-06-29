@@ -4,8 +4,11 @@
 @import "index";
 @import "nav";
 @import "signup";
+@import "server_errs";
+@import "restaurant";
+@import "cart";
 
 body{
-  background:$gutter-color;
+  background:black;
   min-width:$page-min-width;
 }
