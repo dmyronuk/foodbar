@@ -117,8 +117,12 @@ app.get("/404", (req, res) => {
 });
 
 app.get("/menus/:menu_id", (req, res) => {
-
   let outData = mockDB.items[0];
+  // console.log("menu_id: ", menu_id);
+  console.log("function is    :", queries.selectItemsFromMenu);
+  queries.selectItemsFromMenu(2).then(result => {
+    console.log("result: ", result);
+  })
   res.json(outData);
 })
 

@@ -53,6 +53,7 @@ $(document).ready(function(){
   $(".menu_img").on("click", function(event){
     var $target = $(event.target);
     var menu_id = $target.attr("menu_id");
+    console.log("menu_id", menu_id)
 
     $.ajax({
       type: "GET",
