@@ -85,9 +85,9 @@ exports.up = function(knex, Promise) {
 
   function createOrders() {
     return knex.schema.createTable("orders", table => {
-      table.increments("order_id").unsigned().primary();	
+      table.increments("order_id").unsigned().primary();
       table.integer("customer_id").unsigned();
-      table.foreign("customer_id").references("customers.customer_id")   
+      table.foreign("customer_id").references("customers.customer_id")
       table.string("order_date");
     });
   };
@@ -102,14 +102,14 @@ exports.up = function(knex, Promise) {
       table.integer("quantity").unsigned();
       table.integer("total_price").unsigned();
       table.integer("total_prep_time").unsigned();
-      table.string("status");	
+      table.string("status");
     });
   };
 
 };
 
 exports.down = function(knex, Promise) {
-  
+
   return dropOrderLines()
     .then(dropOrders)
     .then(dropMenuItems)
