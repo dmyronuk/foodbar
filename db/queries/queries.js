@@ -65,9 +65,7 @@ function getPass(email) {
     .where("email", email)
 }
 
-
-/*given order_id from orderLines, return items in a cart (name, description, cost, url)*/
-
+/*given an order_id, shows items in a cart*/
 function showCartItems(orderId) {
   return knex("orderLines")
     .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
@@ -81,12 +79,19 @@ function showCartItems(orderId) {
 // showCartItems(1) /*for testing*/
 
 
+//Given user_email, return id of active cart (think this might be order in db?)
+// function getCartStatus(email)
 
+//Given user email, create a new active cart
 
-
-
-
-
+function createActiveCart(email) {
+  return knex("logins")
+    .join("customers", "logins.login_id", "customers.login_id")
+    .join("orders", "customers.customer_id", "order.customer_id")
+    .insert({
+      order_date:
+    })
+}
 
 
 
