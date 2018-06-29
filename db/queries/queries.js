@@ -16,7 +16,7 @@ function insertIntoLogins(obj) {
   }).asCallback()
 }
 
-function insertIntoCustomers(obj){
+function insertIntoCustomers(obj) {
   insertIntoLogins({
     email:"dasd@HOTMAIL",
     password:"PASSWORD"
@@ -35,12 +35,12 @@ insertIntoCustomers({
   last_name: "basd",
   phone_number: "6475376750",
 })
-// knex("customer").join("order", "order.customer id", "=", "customer.customer_id").join("customer", "customer.login_id", "=", "login.login_id").select()
-// .where({
 
-// }).then (result => {
-
-// })
+// function createActiveCart(obj) {
+//   knex("logins").select().then (result => {
+//     knex("orderLines").join()
+//   })
+// }
 
 module.exports = {}
 
