@@ -15,6 +15,7 @@ function addMenuItemHandler(event){
 }
 
 function createMenuItem(dataRow){
+  console.log(dataRow)
   var $item = $(`
     <div class="menu-item">
       <div>
@@ -22,14 +23,14 @@ function createMenuItem(dataRow){
       </div>
       <div class="item-description-container">
         <h4>
-          ${dataRow.name}
+          ${dataRow.item_name}
         </h4>
         <div>
           ${dataRow.description}
         </div>
         <div>
           <div>
-            ${dataRow.price}
+            ${(dataRow.price / 100).toFixed(2)}
           <div>
             <form id="${dataRow.id}">
               <input name="quantity" type="text" value=1>
@@ -44,29 +45,40 @@ function createMenuItem(dataRow){
   return $item;
 };
 
-function appendMenuItem($item){
-  $(".menu-item-container").append($item);
+function createCategoryHeading(category){
+  return `
+    <div>
+      <h2>
+        ${category[0].toUpperCase() + category.slice(1)}
+      </h2>
+    </div>
+  `
 };
 
-$(document).ready(function(){
+function populateCategory(data, category){
+  var categoryArr = data[category];
+  var $categoryHeading = createCategoryHeading(category);
+  $(".menu-item-container").append($categoryHeading);
 
+  categoryArr.forEach(elem => {
+    var $curItem = createMenuItem(elem);
+    $(".menu-item-container").append($curItem);
+  })
+}
+
+$(document).ready(function(){
   $(".menu_img").on("click", function(event){
     var $target = $(event.target);
     var menu_id = $target.attr("menu_id");
     console.log("menu_id", menu_id)
 
-    $.ajax({
-      type: "GET",
-      url: `/menus/${menu_id}`,
-      contentType: "application/json",
-      success: function(data){
+    $.get(`/menus/${menu_id}`, function(data){
         var $container = $(".menu-item-container");
         $container.empty();
-        for(var i=0; i<15; i++){
-          var $curItem = createMenuItem(data);
-          appendMenuItem($curItem);
-        }
-       }
-    })
+        populateCategory(data, "appetizers");
+        // populateCategory(data, "mains");
+        populateCategory(data, "beverages");
+      }
+    )
   })
 });

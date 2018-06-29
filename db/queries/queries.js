@@ -43,7 +43,7 @@ function selectItemsFromMenu(menuId){
     .join("items", "menu_items.item_id", "items.item_id")
     .join("categories", "items.category_id", "categories.category_id")
     .select("menu_items.item_name", "items.description", "items.price", "items.url", "categories.name")
-    .where("menus.menu_id", menuID)
+    .where("menus.menu_id", menuId)
     .then(result=>{
       const groupedItems = {}
       for (let i = 0; i < result.length; i++) {
@@ -54,6 +54,7 @@ function selectItemsFromMenu(menuId){
           groupedItems[result[i].name].push(result[i])
         }
       }
+      return groupedItems;
     })
 }
 

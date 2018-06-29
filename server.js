@@ -111,15 +111,6 @@ app.get("/404", (req, res) => {
   res.render("404", templateVars);
 });
 
-app.get("/menus/:menu_id", (req, res) => {
-  let outData = mockDB.items[0];
-  // console.log("menu_id: ", menu_id);
-  console.log("function is    :", queries.selectItemsFromMenu);
-  queries.selectItemsFromMenu(2).then(result => {
-    console.log("result: ", result);
-  })
-  res.json(outData);
-})
 
 //get the restaurant page and display menus
 //once in this route, it should behave like a single page application - lots of ajax
@@ -196,6 +187,20 @@ app.get("/cart", (req, res) => {
 //confirm checkout -- twilio db stuff and twilio text goes in here
 app.post("/cart", (req, res) => {
 
+})
+
+app.get("/menus/:menu_id", (req, res) => {
+  console.log("menu_id", req.params.menu_id)
+  let outData = mockDB.items[0];
+  // console.log("menu_id: ", menu_id);
+  queries.selectItemsFromMenu(req.params.menu_id).then(result=>{
+    res.json({
+      mains:result.mains,
+      appetizers:result.appetizers,
+      beverages:result.beverages,
+      deserts:result.deserts,
+    });
+  })
 })
 
 app.get("/login", (req, res) => {
