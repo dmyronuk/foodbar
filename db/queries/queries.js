@@ -16,7 +16,8 @@ module.exports = {
   selectItemsFromMenu,
   getPass,
   selectEmailFromCustomer,
-  selectAllInfoFromRestaurants
+  selectAllInfoFromRestaurants,
+  showCartItems
 }
 
 function insertIntoLogins(obj) {
