@@ -45,10 +45,17 @@ function selectItemsFromMenus(menuID){
     .select("menu_items.item_name", "items.description", "items.price", "items.url", "categories.name")
     .where("menus.menu_id", menuID)
     .then(result=>{
-      console.log(result)
+      const groupedItems = {}
+      for (let i = 0; i < result.length; i++) {
+        if (!groupedItems[result[i].name]) {
+          groupedItems[result[i].name] = []
+          groupedItems[result[i].name].push(result[i])
+        } else {
+          groupedItems[result[i].name].push(result[i])
+        }
+      }
     })
 }
-selectItemsFromMenus(1)
 
 /*gets a hashed password that matches its email*/
 async function getPass(email) {
