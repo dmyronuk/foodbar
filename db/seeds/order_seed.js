@@ -224,58 +224,85 @@ exports.seed = function(knex, Promise) {
   }
 
   function insertMenuItems(){
-    return knex("menus").join("items", 1, "=", 1).select().then(result => {
-        knex("menu_items").insert([
-          {
-            menu_id: result[0].menu_id,
-            menu_name: result[0].name,
-            item_id: result[0].item_id,
-            item_name: result[0].name
-          },
-          {
-            menu_id: result[1].menu_id,
-            menu_name: result[1].name,
-            item_id: result[0].item_id,
-            item_name: result[0].name
-          },
-          {
-            menu_id: result[0].menu_id,
-            menu_name: result[0].name,
-            item_id: result[7].item_id,
-            item_name: result[7].name
-          },
-          {
-            menu_id: result[0].menu_id,
-            menu_name: result[0].name,
-            item_id: result[8].item_id,
-            item_name: result[8].name
-          },
-          {
-            menu_id: result[0].menu_id,
-            menu_name: result[0].name,
-            item_id: result[9].item_id,
-            item_name: result[9].name
-          },
-          {
-            menu_id: result[1].menu_id,
-            menu_name: result[1].name,
-            item_id: result[7].item_id,
-            item_name: result[7].name
-          },
-          {
-            menu_id: result[1].menu_id,
-            menu_name: result[1].name,
-            item_id: result[8].item_id,
-            item_name: result[8].name
-          },
-          {
-            menu_id: result[1].menu_id,
-            menu_name: result[1].name,
-            item_id: result[9].item_id,
-            item_name: result[9].name
-          }
-        ]).asCallback()
+    return knex.select().from("menus")
+    .then(result => {
+      console.log(result)
+      knex.select().from("items").then(result => {
+        console.log(result)
+      })
+          
+        // knex("menu_items").insert([
+        //   {
+        //     menu_id: result[0].menu_id,
+        //     menu_name: result[0].name
+        //   },
+        //   {
+        //     menu_id: result[1].menu_id,
+        //     menu_name: result[1].name
+        //   },
+        //   {
+        //     menu_id: result[0].menu_id,
+        //     menu_name: result[0].name
+        //   },
+        //   {
+        //     menu_id: result[0].menu_id,
+        //     menu_name: result[0].name
+        //   },
+        //   {
+        //     menu_id: result[0].menu_id,
+        //     menu_name: result[0].name
+        //   },
+        //   {
+        //     menu_id: result[1].menu_id,
+        //     menu_name: result[1].name
+        //   },
+        //   {
+        //     menu_id: result[1].menu_id,
+        //     menu_name: result[1].name
+        //   },
+        //   {
+        //     menu_id: result[1].menu_id,
+        //     menu_name: result[1].name
+        //   }
+        // ]).asCallback()
     })
+    
+     // knex("items").select().then(result => {
+     //    knex("menu_items").insert([
+     //      {
+     //        item_id: result[0].item_id,
+     //        item_name: result[0].name
+     //      },
+     //      {
+     //        item_id: result[0].item_id,
+     //        item_name: result[0].name
+     //      },
+     //      {
+     //        item_id: result[7].item_id,
+     //        item_name: result[7].name
+     //      },
+     //      {
+     //        item_id: result[8].item_id,
+     //        item_name: result[8].name
+     //      },
+     //      {
+     //        item_id: result[9].item_id,
+     //        item_name: result[9].name
+     //      },
+     //      {
+     //        item_id: result[7].item_id,
+     //        item_name: result[7].name
+     //      },
+     //      {
+     //        item_id: result[8].item_id,
+     //        item_name: result[8].name
+     //      },
+     //      {
+     //        item_id: result[9].item_id,
+     //        item_name: result[9].name
+     //      }
+     //    ]).asCallback();
+     //  })
   }    
 
 
