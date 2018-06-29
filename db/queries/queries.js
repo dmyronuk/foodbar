@@ -10,13 +10,22 @@ const knex = require('knex')({
 });
 
 module.exports = {
+  // function insertIntoLogins(obj)
   insertIntoLogins,
+  // function insertIntoCustomers(obj)
   insertIntoCustomers,
+// function selectItemsFromMenu(menuId)
   selectMenusFromRestaurants,
+
   selectItemsFromMenu,
+
   getPass,
+
   selectEmailFromCustomer,
-  selectAllInfoFromRestaurants
+
+  selectAllInfoFromRestaurants,
+  
+  showCartItems
 }
 
 function insertIntoLogins(obj) {
@@ -67,22 +76,27 @@ function getPass(email) {
     .where("email", email)
 }
 
-
-/*given cart_id, return, return items in a car (name, description, cost, url)*/
-
-
-
-
-
-
-
-
-
+/*given an order_id, shows items in a cart*/
+function showCartItems(orderId) {
+  return knex("orderLines")
+    .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
+    .join("items", "menu_items.item_id", "items.item_id")
+    .select("items.name", "items.description", "items.price", "items.url")
+    .where("orderLines.order_id", orderId)
+}
+// showCartItems(1) /*for testing*/
 
 
-
-
-
+//Given user email, create a new active cart
+function createActiveCart(email) {
+  return knex("logins")
+    .join("customers", "logins.login_id", "customers.login_id")
+    .join("orders", "customers.customer_id", "order.customer_id")
+    .join("orderLines", "orders.order_id", "orderLines.order_id")
+    .insert({
+      order_date:
+    })
+}
 
 
 
