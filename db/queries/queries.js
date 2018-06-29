@@ -14,17 +14,17 @@ module.exports = {
   insertIntoLogins,
   // function insertIntoCustomers(obj)
   insertIntoCustomers,
-// function selectItemsFromMenu(menuId)
+// function selectMenusFromRestaurants(restaurantId)
   selectMenusFromRestaurants,
-
+// function selectItemsFromMenu(menuId)
   selectItemsFromMenu,
-
+// function getPass(email) 
   getPass,
-
+// function selectEmailFromCustomer(customerId)
   selectEmailFromCustomer,
-
+// function selectAllInfoFromRestaurants(restaurantId)
   selectAllInfoFromRestaurants,
-  
+// function showCartItems(orderId)
   showCartItems
 }
 
@@ -93,9 +93,6 @@ function createActiveCart(email) {
     .join("customers", "logins.login_id", "customers.login_id")
     .join("orders", "customers.customer_id", "order.customer_id")
     .join("orderLines", "orders.order_id", "orderLines.order_id")
-    .insert({
-      order_date:
-    })
 }
 
 
@@ -175,6 +172,42 @@ function selectAllInfoFromRestaurants(restaurantId){
 }
 
 
-// selectAllInfoFromRestaurants().then(result=>{
-//   console.log(result)
-// })
+function insertItemIntoCart(restaurantId){
+  return knex("orderLines")
+    .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
+    .join("items", "menu_items.item_id", "items.item_id")
+    .select()
+    // .where("orderLines.order_id", orderId)
+
+  //   return knex("logins").insert({
+  //   "email": obj.email,
+  //   "password": obj.password
+  // }).asCallback()
+}
+
+
+
+function createOrder(email){
+     return knex("orders")
+    .join("customers", "orders.customer_id", "customers.customer_id")
+    .join("logins", "customers.login_id", "logins.login_id")
+    .select()
+    .where("logins.email", email)
+    .then(result =>{
+      knex("orders")
+      .insert({
+        customer_id: result[0].customer_id
+      }).asCallback()
+    })
+
+    
+
+  //   return knex("logins").insert({
+  //   "email": obj.email,
+  //   "password": obj.password
+  // }).asCallback()
+}
+
+insertItemIntoCart().then(result =>{
+  console.log(result)
+})
