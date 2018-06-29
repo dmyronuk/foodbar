@@ -226,7 +226,7 @@ exports.seed = function(knex, Promise) {
   async function insertMenuItems(){
   	const items = await knex("items").select()
   	const menus = await knex("menus").select()
-    knex("menu_items").insert([
+    return knex("menu_items").insert([
       {
         menu_id: menus[0].menu_id,
         menu_name: menus[0].name,
@@ -279,19 +279,40 @@ exports.seed = function(knex, Promise) {
   }
 
   async function insertOrderLines(){
-    const orders = await knex("orders").select()
-    const menuItems = await knex("menu_items").select()
-    // const initialInsert =  knex("menu_items").select()
-    // knex("orderLines").insert([
-    //   {
-    //     order_id: orders[0].order_id,
-    //     menu_item_id: menuItems[0].menu_item_id,
-    //     quantity: 2
-    //   }
-    // ]).asCallback()
+    const orders = await knex("orders").select();
+    const menuItems = await
+      knex("menu_items")
+      .join("items", "menu_items.item_id", "items.item_id")
+      .select();
     console.log(orders)
     console.log(menuItems)
-    // console.log(initialInsert)
+    return knex("orderLines").insert([
+      {
+        order_id: orders[0].order_id,
+        menu_item_id: menuItems[0].menu_item_id,
+        quantity: 2,
+        status: "In Progress",
+        total_price: 2 * menuItems[0].price,
+        total_prep_time: 2 * menuItems[0].prep_time
+      },
+      {
+        order_id: orders[0].order_id,
+        menu_item_id: menuItems[3].menu_item_id,
+        quantity: 1,
+        status: "In Progress",
+        total_price: 1 * menuItems[3].price,
+        total_prep_time: 1 * menuItems[3].prep_time
+      },
+      {
+        order_id: orders[0].order_id,
+        menu_item_id: menuItems[5].menu_item_id,
+        quantity: 1,
+        status: "In Progress",
+        total_price: 1 * menuItems[5].price,
+        total_prep_time: 1 * menuItems[5].prep_time
+      }
+    ]).asCallback()
+
   }
 
   return deleteOrderLines()
@@ -309,9 +330,7 @@ exports.seed = function(knex, Promise) {
     .then(insertRestaurants)
     .then(insertItems)
     .then(insertMenus)
+    .then(insertOrders)
     .then(insertMenuItems)
-    .then(insertOrders)
-    .then(insertOrders)
-    // .then(insertMenuItems)
-    .then(insertOrderLines)
+    .then(insertOrderLines);
 };
