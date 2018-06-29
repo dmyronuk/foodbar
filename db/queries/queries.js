@@ -74,22 +74,16 @@ function showCartItems(orderId) {
     .join("items", "menu_items.item_id", "items.item_id")
     .select("items.name", "items.description", "items.price", "items.url")
     .where("orderLines.order_id", orderId)
-    .then(result=>{
-      console.log(result)
-    })
 }
 // showCartItems(1) /*for testing*/
 
 
-//Given user_email, return id of active cart (think this might be order in db?)
-// function getCartStatus(email)
-
 //Given user email, create a new active cart
-
 function createActiveCart(email) {
   return knex("logins")
     .join("customers", "logins.login_id", "customers.login_id")
     .join("orders", "customers.customer_id", "order.customer_id")
+    .join("orderLines", "orders.order_id", "orderLines.order_id")
     .insert({
       order_date:
     })
