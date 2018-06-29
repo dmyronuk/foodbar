@@ -13,17 +13,17 @@
         <div class="restaurant-main-container">
           <header>
             <div>
-              <img src="/images/stock-logo.jpeg"/>
+              <img src="/images/stock-logo.jpeg">
             </div>
             <div>
               <div>
-                <h2><%= name %></h2>
+                <h2>Good Restaurant</h2>
               </div>
               <div>
-                <h4><%= address %></h4>
+                <h4>444 Drury Lane</h4>
               </div>
               <div>
-                <h4><%= phone_number %></h4>
+                <h4>647-999-9999</h4>
               </div>
           </header>
 
@@ -37,14 +37,14 @@
                 <h5>
                   Lunch
                 </h5>
-                <img class="menu_img" menu_id="<%= lunch_menu_id %>" src="/images/burger.jpg"/>
+                <img class="menu_img" menu_id="<%= menusObj.lunch_menu_id %>" src="/images/burger.jpg"/>
               </div>
 
               <div class="menu-img-container">
                 <h5>
                   Dinner
                 </h5>
-                <img class="menu_img" menu_id="<%= dinner_menu_id %>" src="/images/pasta.jpeg" />
+                <img class="menu_img" menu_id="<%= menusObj.dinner_menu_id %>" src="/images/pasta.jpeg" />
               </div>
             </div>
 
@@ -52,6 +52,5 @@
         </div>
       </div>
     </div>
-
   </body>
 </html>

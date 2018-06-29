@@ -13,8 +13,8 @@ module.exports = {
   insertIntoLogins,
   insertIntoCustomers,
   selectMenusFromRestaurants,
-  selectItemsFromMenus,
-  getPass
+  selectItemsFromMenu,
+  getPass,
 }
 
 function insertIntoLogins(obj) {
@@ -37,7 +37,7 @@ function insertIntoCustomers(obj){
 }
 
 /*return every item from menu_id with name(of menu), item_name, description, price, url*/
-function selectItemsFromMenus(menuID){
+function selectItemsFromMenu(menuId){
   return knex("menus")
     .join("menu_items", "menus.menu_id", "menu_items.menu_id")
     .join("items", "menu_items.item_id", "items.item_id")
@@ -58,16 +58,12 @@ function selectItemsFromMenus(menuID){
 }
 
 /*gets a hashed password that matches its email*/
-async function getPass(email) {
-  const logins = await knex("logins")
+function getPass(email) {
+  return knex("logins")
     .select("logins.password")
     .where("email", email)
-    // .then(result=>{
-    //   console.log(result)
-    // })
-
-    return console.log(logins)
 }
+
 
 /*given cart_id, return, return items in a car (name, description, cost, url)*/
 
@@ -147,6 +143,3 @@ function selectMenusFromRestaurants(restaurantID){
     .where("menus.restaurant_id", restaurantID)
 }
 
-// function selectItemsFromMenus(menuID){
-
-// }

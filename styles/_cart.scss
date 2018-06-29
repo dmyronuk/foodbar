@@ -1,5 +1,5 @@
 .cart-container{
-  height:32rem;
+  min-height:32rem;
   width:48rem;
   background-color:white;
   position:fixed;
@@ -27,21 +27,51 @@
   }
 
   table{
-    margin-top:1em;
+    margin-top:2em;
     border-collapse:collapse;
+    text-align:center;
+
+    .cart-remove-button{
+      background:none;
+      color:blue;
+      transition:color 1s;
+
+      &:hover{
+        color:#4d4dff;
+        background:none;
+      }
+    }
+
+    .colored-row{
+      background-color:#eeeeee;
+    }
+
+    .spacer-row{
+      height:1.5em;
+    }
+
+    .right-align-td{
+      text-align:right;
+    }
 
     th{
       border-bottom:1px solid black;
       padding:0em 1em 0em 1em;
     }
     td{
-      padding:0em 1em 0em 1em;
+      padding:0.2em 1em 0.2em 1em;
     }
   }
 
   footer{
     padding:1em;
     flex-grow:0;
+
+    div{
+      text-align:center;
+      font-weight:bold;
+      font-size:1.1em;
+    }
   }
 
   button{
