@@ -1,45 +1,43 @@
-
 exports.seed = function(knex, Promise) {
 
-
-  function deleteOrderLine(){
-    return knex("orderLine").del()
+  function deleteOrderLines(){
+    return knex("orderLines").del()
   }
 
-  function deleteOrder(){
-    return knex("order").del()
+  function deleteMenuItems(){
+    return knex("menu_items").del()
   }
 
-  function deleteMenuItem(){
-    return knex("menuItem").del()
+  function deleteOrders(){
+    return knex("orders").del()
   }
 
-  function deleteItem(){
-    return knex("item").del()
+  function deleteItems(){
+    return knex("items").del()
   }
 
-  function deleteMenu(){
-    return knex("menu").del()
+  function deleteMenus(){
+    return knex("menus").del()
   }
 
-  function deleteRestaurant(){
-    return knex("restaurant").del()
+  function deleteRestaurants(){
+    return knex("restaurants").del()
   }
 
-  function deleteCustomer(){
-    return knex("customer").del()
+  function deleteCustomers(){
+    return knex("customers").del()
   }
 
-  function deleteCategory(){
-    return knex("category").del()
+  function deleteCategories(){
+    return knex("categories").del()
   }
 
-  function deleteLogin(){
-    return knex("login").del()
+  function deleteLogins(){
+    return knex("logins").del()
   }
 
-  function insertLogin(){
-    return knex("login").insert([
+  function insertLogins(){
+    return knex("logins").insert([
       {
         email: "user1@gmail.com",
         password: "z"
@@ -55,20 +53,20 @@ exports.seed = function(knex, Promise) {
     ]).asCallback();
   }
 
-  function insertCategory(){
-    return knex("category").insert([
+  function insertCategories(){
+    return knex("categories").insert([
       {name: "appetizers"},
       {name: "mains"},
       {name: "beverages"}
     ]).asCallback();
   }
 
-  function insertCustomer(){
-    return knex("login").select().then(result =>{
-      knex("customer").insert([
+  function insertCustomers(){
+    return knex("logins").select().then(result =>{
+      knex("customers").insert([
         {
-          login_id: result[0].login_id,
           first_name: "Frank",
+          login_id: result[0].login_id,
           last_name: "Zhou",
           phone_number: "6476096899"
         },
@@ -82,9 +80,9 @@ exports.seed = function(knex, Promise) {
     });
   }
 
-  function insertRestaurant(){
-    return knex("login").select().then(result =>{
-      knex("restaurant").insert(
+  function insertRestaurants(){
+    return knex("logins").select().then(result =>{
+      knex("restaurants").insert(
       {
         login_id: result[2].login_id,
         name: "Lighthouse Labs",
@@ -95,9 +93,9 @@ exports.seed = function(knex, Promise) {
     });
   }
 
-  function insertMenu(){
-    return knex("restaurant").select().then(result => {
-      knex("menu").insert([
+  function insertMenus(){
+    return knex("restaurants").select().then(result => {
+      knex("menus").insert([
       {
         restaurant_id: result[0].restaurant_id,
         name: "Lunch",
@@ -116,9 +114,9 @@ exports.seed = function(knex, Promise) {
     });
   }
 
-  function insertItem(){
-    return knex("category").select().then(result => {
-      knex("item").insert([
+  function insertItems(){
+    return knex("categories").select().then(result => {
+      knex("items").insert([
         {
           category_id: result[0].category_id,
           name: "Spicy Nachos",
@@ -206,66 +204,9 @@ exports.seed = function(knex, Promise) {
     });
   }
 
-  function insertMenuItem(){
-    // return knex("item").select().then(result => {
-    //   knex("menu").select().then(result1 => {
-        knex("menuItem").insert([
-          // {
-          //   menu_id: result1[0].menu_id,
-          //   menu_name: result1[0].name,
-          //   item_id: result[0].item_id,
-          //   item_name: result[0].name
-          // },
-          // {
-          //   menu_id: result1[1].menu_id,
-          //   menu_name: result1[1].name,
-          //   item_id: result[0].item_id,
-          //   item_name: result[0].name
-          // },
-          // {
-          //   menu_id: result1[0].menu_id,
-          //   menu_name: result1[0].name,
-          //   item_id: result[7].item_id,
-          //   item_name: result[7].name
-          // },
-          // {
-          //   menu_id: result1[0].menu_id,
-          //   menu_name: result1[0].name,
-          //   item_id: result[8].item_id,
-          //   item_name: result[8].name
-          // },
-          // {
-          //   menu_id: result1[0].menu_id,
-          //   menu_name: result1[0].name,
-          //   item_id: result[9].item_id,
-          //   item_name: result[9].name
-          // },
-          // {
-          //   menu_id: result1[1].menu_id,
-          //   menu_name: result1[1].name,
-          //   item_id: result[7].item_id,
-          //   item_name: result[7].name
-          // },
-          // {
-          //   menu_id: result1[1].menu_id,
-          //   menu_name: result1[1].name,
-          //   item_id: result[8].item_id,
-          //   item_name: result[8].name
-          // },
-          // {
-          //   menu_id: result1[1].menu_id,
-          //   menu_name: result1[1].name,
-          //   item_id: result[9].item_id,
-          //   item_name: result[9].name
-          // }
-        ]).asCallback();
-    //   })
-    // });
-  }
-
-  function insertOrder(){
-    return knex("customer").select().then(result =>{
-      knex("order").insert([
+  function insertOrders(){
+    return knex("customers").select().then(result =>{
+      knex("orders").insert([
         {
           customer_id: result[0].customer_id,
           order_date: "1500/06/28/2018"
@@ -282,41 +223,114 @@ exports.seed = function(knex, Promise) {
     });
   }
 
-  function insertOrderLine(){
-    // return knex("order").select().then(result => {
-    //   console.log(result);
-    //   knex("menuItem").join("item", "menuItem.item_id", "=", "item.item_id").select().then(result1 => {
-    //     console.log(result1);
-        knex("orderLine").insert([
-          // {
-          //   order_id: result[0].order_id,
-          //   menuItem_id: result1[0].menuItem_id,
-          //   status: "In Progress",
-          //   quantity: 1,
-
-
-          // }
-        ]).asCallback();
-      // });
-    // });
+  async function insertMenuItems(){
+  	const items = await knex("items").select()
+  	const menus = await knex("menus").select()
+    return knex("menu_items").insert([
+      {
+        menu_id: menus[0].menu_id,
+        menu_name: menus[0].name,
+        item_id: items[0].item_id,
+        item_name: items[0].name
+      },
+      {
+        menu_id: menus[1].menu_id,
+        menu_name: menus[1].name,
+        item_id: items[0].item_id,
+        item_name: items[0].name
+      },
+      {
+        menu_id: menus[0].menu_id,
+        menu_name: menus[0].name,
+        item_id: items[7].item_id,
+        item_name: items[7].name
+      },
+      {
+        menu_id: menus[0].menu_id,
+        menu_name: menus[0].name,
+        item_id: items[8].item_id,
+        item_name: items[8].name
+      },
+      {
+        menu_id: menus[0].menu_id,
+        menu_name: menus[0].name,
+        item_id: items[9].item_id,
+        item_name: items[9].name
+      },
+      {
+        menu_id: menus[1].menu_id,
+        menu_name: menus[1].name,
+        item_id: items[7].item_id,
+        item_name: items[7].name
+      },
+      {
+        menu_id: menus[1].menu_id,
+        menu_name: menus[1].name,
+        item_id: items[8].item_id,
+        item_name: items[8].name
+      },
+      {
+        menu_id: menus[1].menu_id,
+        menu_name: menus[1].name,
+        item_id: items[9].item_id,
+        item_name: items[9].name
+      }
+    ]).asCallback()
   }
 
-  return deleteOrderLine()
-    .then(deleteOrder)
-    .then(deleteMenuItem)
-    .then(deleteItem)
-    .then(deleteMenu)
-    .then(deleteRestaurant)
-    .then(deleteCustomer)
-    .then(deleteCategory)
-    .then(deleteLogin)
-    .then(insertCategory)
-    .then(insertLogin)
-    .then(insertCustomer)
-    .then(insertRestaurant)
-    .then(insertItem)
-    .then(insertMenu)
-    .then(insertOrder)
-    .then(insertMenuItem)
-    .then(insertOrderLine);
+  async function insertOrderLines(){
+    const orders = await knex("orders").select();
+    const menuItems = await
+      knex("menu_items")
+      .join("items", "menu_items.item_id", "items.item_id")
+      .select();
+    console.log(orders)
+    console.log(menuItems)
+    return knex("orderLines").insert([
+      {
+        order_id: orders[0].order_id,
+        menu_item_id: menuItems[0].menu_item_id,
+        quantity: 2,
+        status: "In Progress",
+        total_price: 2 * menuItems[0].price,
+        total_prep_time: 2 * menuItems[0].prep_time
+      },
+      {
+        order_id: orders[0].order_id,
+        menu_item_id: menuItems[3].menu_item_id,
+        quantity: 1,
+        status: "In Progress",
+        total_price: 1 * menuItems[3].price,
+        total_prep_time: 1 * menuItems[3].prep_time
+      },
+      {
+        order_id: orders[0].order_id,
+        menu_item_id: menuItems[5].menu_item_id,
+        quantity: 1,
+        status: "In Progress",
+        total_price: 1 * menuItems[5].price,
+        total_prep_time: 1 * menuItems[5].prep_time
+      }
+    ]).asCallback()
+
+  }
+
+  return deleteOrderLines()
+    .then(deleteMenuItems)
+    .then(deleteOrders)
+    .then(deleteItems)
+    .then(deleteMenus)
+    .then(deleteRestaurants)
+    .then(deleteCustomers)
+    .then(deleteCategories)
+    .then(deleteLogins)
+    .then(insertCategories)
+    .then(insertLogins)
+    .then(insertCustomers)
+    .then(insertRestaurants)
+    .then(insertItems)
+    .then(insertMenus)
+    .then(insertOrders)
+    .then(insertMenuItems)
+    .then(insertOrderLines);
 };

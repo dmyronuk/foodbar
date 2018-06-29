@@ -1,56 +1,56 @@
 exports.up = function(knex, Promise) {
-  return createLogin()
-    .then(createCategory)
-    .then(createCustomer)
-    .then(createRestaurant)
-    .then(createMenu)
-    .then(createItem)
-    .then(createMenuItem)
-    .then(createOrder)
-    .then(createOrderLine);
+  return createLogins()
+    .then(createCategories)
+    .then(createCustomers)
+    .then(createRestaurants)
+    .then(createMenus)
+    .then(createItems)
+    .then(createMenuItems)
+    .then(createOrders)
+    .then(createOrderLines);
 
-  function createLogin() {
-    return knex.schema.createTable("login", table => {
+  function createLogins() {
+    return knex.schema.createTable("logins", table => {
       table.increments("login_id").unsigned().primary();
       table.string("email");
       table.string("password");
     });
   };
 
-  function createCategory(){
-    return knex.schema.createTable("category", table => {
+  function createCategories(){
+    return knex.schema.createTable("categories", table => {
       table.increments("category_id").unsigned().primary();
       table.string("name");
     });
   };
 
-  function createCustomer() {
-    return knex.schema.createTable("customer", table => {
+  function createCustomers() {
+    return knex.schema.createTable("customers", table => {
       table.increments("customer_id").unsigned().primary();
       table.integer("login_id").unsigned();
-      table.foreign("login_id").references("login.login_id");
+      table.foreign("login_id").references("logins.login_id");
       table.string("first_name");
       table.string("last_name");
       table.string("phone_number");
     });
   };
 
-  function createRestaurant() {
-    return knex.schema.createTable("restaurant", table => {
+  function createRestaurants() {
+    return knex.schema.createTable("restaurants", table => {
       table.increments("restaurant_id").unsigned().primary();
       table.integer("login_id").unsigned();
-      table.foreign("login_id").references("login.login_id");
+      table.foreign("login_id").references("logins.login_id");
       table.string("name");
       table.string("address");
       table.string("phone_number");
     });
   };
 
-  function createMenu() {
-    return knex.schema.createTable("menu", table => {
+  function createMenus() {
+    return knex.schema.createTable("menus", table => {
       table.increments("menu_id").unsigned().primary();
       table.integer("restaurant_id").unsigned();
-      table.foreign("restaurant_id").references("restaurant.restaurant_id");
+      table.foreign("restaurant_id").references("restaurants.restaurant_id");
       table.string("name");
       table.string("start_time");
       table.string("end_time");
@@ -58,11 +58,11 @@ exports.up = function(knex, Promise) {
     });
   };
 
-  function createItem() {
-    return knex.schema.createTable("item", table => {
+  function createItems() {
+    return knex.schema.createTable("items", table => {
       table.increments("item_id").unsigned().primary();
       table.integer("category_id").unsigned();
-      table.foreign("category_id").references("category.category_id");
+      table.foreign("category_id").references("categories.category_id");
       table.string("name");
       table.integer("price").unsigned();
       table.string("description");
@@ -71,89 +71,89 @@ exports.up = function(knex, Promise) {
     });
   };
 
-  function createMenuItem() {
-    return knex.schema.createTable("menuItem", table => {
-      table.increments("menuItem_id").unsigned().primary();
+  function createMenuItems() {
+    return knex.schema.createTable("menu_items", table => {
+      table.increments("menu_item_id").unsigned().primary();
       table.integer("item_id").unsigned();
       table.integer("menu_id").unsigned();
-      table.foreign("item_id").references("item.item_id");
-      table.foreign("menu_id").references("menu.menu_id");
+      table.foreign("item_id").references("items.item_id");
+      table.foreign("menu_id").references("menus.menu_id");
       table.string("menu_name");
       table.string("item_name");
     });
   };
 
-  function createOrder() {
-    return knex.schema.createTable("order", table => {
-      table.increments("order_id").unsigned().primary();	
+  function createOrders() {
+    return knex.schema.createTable("orders", table => {
+      table.increments("order_id").unsigned().primary();
       table.integer("customer_id").unsigned();
-      table.foreign("customer_id").references("customer.customer_id")   
+      table.foreign("customer_id").references("customers.customer_id")
       table.string("order_date");
     });
   };
 
-  function createOrderLine() {
-    return knex.schema.createTable("orderLine", table => {
-      table.increments("orderLine_id").unsigned().primary();
+  function createOrderLines() {
+    return knex.schema.createTable("orderLines", table => {
+      table.increments("orderLines_id").unsigned().primary();
       table.integer("order_id").unsigned();
-      table.integer("menuItem_id").unsigned();
-      table.foreign("order_id").references("order.order_id")
-      table.foreign("menuItem_id").references("menuItem.menuItem_id")
+      table.integer("menu_item_id").unsigned();
+      table.foreign("order_id").references("orders.order_id")
+      table.foreign("menu_item_id").references("menu_items.menu_item_id")
       table.integer("quantity").unsigned();
       table.integer("total_price").unsigned();
       table.integer("total_prep_time").unsigned();
-      table.string("status");	
+      table.string("status");
     });
   };
 
 };
 
 exports.down = function(knex, Promise) {
-  
-  return dropOrderLine()
-    .then(dropOrder)
-    .then(dropMenuItem)
-    .then(dropItem)
-    .then(dropMenu)
-    .then(dropRestaurant)
-    .then(dropCustomer)
-    .then(dropCategory)
-    .then(dropLogin);
 
-  function dropOrderLine() {
-    return knex.schema.dropTable("orderLine");
+  return dropOrderLines()
+    .then(dropOrders)
+    .then(dropMenuItems)
+    .then(dropItems)
+    .then(dropMenus)
+    .then(dropRestaurants)
+    .then(dropCustomers)
+    .then(dropCategories)
+    .then(dropLogins);
+
+  function dropOrderLines() {
+    return knex.schema.dropTable("orderLines");
   };
 
-  function dropOrder() {
-    return knex.schema.dropTable("order");
+  function dropOrders() {
+    return knex.schema.dropTable("orders");
   };
 
-  function dropMenuItem() {
-    return knex.schema.dropTable("menuItem");
+  function dropMenuItems() {
+    return knex.schema.dropTable("menu_items");
   };
 
-  function dropItem() {
-    return knex.schema.dropTable("item");
+  function dropItems() {
+    return knex.schema.dropTable("items");
   };
 
-  function dropMenu() {
-    return knex.schema.dropTable("menu");
+  function dropMenus() {
+    return knex.schema.dropTable("menus");
   };
 
-  function dropRestaurant() {
-    return knex.schema.dropTable("restaurant");
+  function dropRestaurants() {
+    return knex.schema.dropTable("restaurants");
   };
 
-  function dropCustomer() {
-    return knex.schema.dropTable("customer");
+  function dropCustomers() {
+    return knex.schema.dropTable("customers");
   };
 
-  function dropCategory() {
-    return knex.schema.dropTable("category");
+  function dropCategories() {
+    return knex.schema.dropTable("categories");
   };
 
-  function dropLogin() {
-    return knex.schema.dropTable("login");
+  function dropLogins() {
+    return knex.schema.dropTable("logins");
   };
 
 

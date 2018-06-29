@@ -8,16 +8,18 @@ const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
 
 const pg = require("pg");
-const settings = require('./db/settings')
-const knex = require('knex')({
-  client: 'pg',
-  connection: {
-    host : settings.hostname,
-    user : settings.user,
-    password : settings.password,
-    database : settings.database
-  }
-});
+// const settings = require('./db/settings')
+// const knex = require('knex')({
+//   client: 'pg',
+//   connection: {
+//     host : settings.hostname,
+//     user : settings.user,
+//     password : settings.password,
+//     database : settings.database
+//   }
+// });
+const queries = require("./db/queries/queries.js");
+
 const mockDB = {
   users:{},
   restaurants:{
@@ -76,11 +78,6 @@ app.post('/sms', (req, res) => {
   res.redirect('/')
 });
 
-const validatePassword = (db, email, plaintextPassword) => {
-  let hashedPassword = db.users[email]["password"];
-  return bcrypt.compareSync(plaintextPassword, hashedPassword);
-};
-
 //remove underscores and cap first letter
 let prettyFormatFormField = (field_val) => {
   let wordArr = field_val.split("_");
@@ -115,37 +112,65 @@ app.get("/404", (req, res) => {
 });
 
 app.get("/menus/:menu_id", (req, res) => {
-
   let outData = mockDB.items[0];
+  // console.log("menu_id: ", menu_id);
+  console.log("function is    :", queries.selectItemsFromMenu);
+  queries.selectItemsFromMenu(2).then(result => {
+    console.log("result: ", result);
+  })
   res.json(outData);
 })
 
+//get the restaurant page and display menus
+//once in this route, it should behave like a single page application - lots of ajax
 app.get("/restaurants/:id", (req, res) => {
   let restaurantId = req.params.id;
-  let lunch_menu_id = 1;
-  let dinner_menu_id = 2;
 
-  if(mockDB.restaurants[restaurantId]){
-    let templateVars = mockDB.restaurants[restaurantId];
-    templateVars.email = req.session.email;
-    templateVars.first_name = req.session.first_name;
-    templateVars.lunch_menu_id = lunch_menu_id;
-    templateVars.dinner_menu_id = dinner_menu_id;
-    res.render("restaurant", templateVars);
-  }else{
-    res.status(404).redirect("/404");
-  }
+  queries.selectMenusFromRestaurants(restaurantId).then(menus => {
+    //if search finds any menus
+    if(menus.length > 0){
+      let menusObj = menus.reduce((acc, cur) => {
+        let key = cur.name.toLowerCase() + "_menu_id";
+        acc[key] = cur.menu_id;
+        return acc;
+      }, {})
+
+      res.render("restaurant", {
+        menusObj: menusObj,
+        email: req.session.email,
+        first_name: req.session.first_name,
+      });
+
+    //else no menus -- 404
+    }else{
+      res.status(404).redirect("/404");
+    }
+  })
 })
 
-app.post("/items/:id", (req, res) => {
+//delete item from logged-in user cart
+app.post("/cart/items/:id/delete", (req, res) => {
+  console.log("deleting item from cart")
+});
+
+//add item to logged-in user cart
+app.post("/cart/items/:id", (req, res) => {
   let item_id_exists = true // once db hooked up, check that item exists in db
+  let id = req.params.id;
+  let quantity = req.body.quantity;
+
   if(item_id_exists){
-    mockDB.cart.push(req.params.id);
-    res.json({status:"success"})
+    mockDB.cart.push({
+      id:req.params.id,
+      quantity:req.body.quantity,
+      cost:5*req.body.quantity,
+    });
+    res.json({inData:req.body})
   }else{
     res.json({status:"failed"})
   }
-})
+});
+
 
 //view all items in cart before checkout
 app.get("/cart", (req, res) => {
@@ -153,7 +178,14 @@ app.get("/cart", (req, res) => {
   //if user is logged in
   if(req.session.email){
     let items = mockDB.cart;
-    res.json(items);
+    let total = items.reduce((acc, cur) => {
+      acc += cur.quantity * cur.cost;
+      return acc
+    },0);
+    res.json({
+      items: items,
+      total: total,
+    });
 
   //else forbidden, user is not logged in
   }else{
@@ -191,7 +223,6 @@ app.get("/login", (req, res) => {
 app.post("/login", (req,res) => {
   let email = req.body.email;
   let password = req.body.password;
-  console.log(req.body)
 
   //check that post request contains an email and password
   let login_field_errs = [];
@@ -203,23 +234,29 @@ app.post("/login", (req,res) => {
     req.session.login_field_errs = login_field_errs;
     res.redirect("/login");
   }else{
-    //if username doesn't exist in db
-    if(! mockDB.users[email]){
+    //if username doesn't exist in db -- need function here
+    if(false){
       req.session.login_validation_err = "Login Does Not Exist";
       res.redirect("/login");
+
     //usename exists so now check if passwords match
     }else{
-      //login success
-      if(validatePassword(mockDB, req.body.email, req.body.password)){
-        req.session.email = email;
-        req.session.first_name = req.body.first_name;
-        res.redirect("/");
 
-      //incorrect password
-      }else{
-        req.session.login_validation_err = "Incorrect Email Or Password";
-        res.redirect("/login");
-      }
+      queries.getPass(req.body.email).then(result => {
+        let dbHash = result[0].password;
+
+        //if password matches hash
+        if(bcrypt.compareSync(req.body.password, dbHash)){
+          req.session.email = email;
+          req.session.first_name = req.body.first_name;
+          res.redirect("/");
+
+        //incorrect password
+        }else{
+          req.session.login_validation_err = "Incorrect Email Or Password";
+          res.redirect("/login");
+        }
+      });
     }
   }
 })
@@ -237,13 +274,13 @@ app.get("/signup", (req, res) => {
     first_name:req.session.first_name,
     signup_field_errs:signup_field_errs,
   }
-  console.log("DB: ", mockDB);
   res.render("signup", templateVars);
 });
 
 app.post("/signup", (req, res) => {
   let fields = ["email", "password", "first_name", "last_name", "phone_number"]
   let signup_field_errs = [];
+
   for(field of fields){
     if(! req.body[field]){
       let formattedField = prettyFormatFormField(field);
@@ -254,37 +291,16 @@ app.post("/signup", (req, res) => {
   //one or more fields failed so we need to redirect back to signup
   if(signup_field_errs.length > 0){
     res.redirect("/signup");
+
   //success - push the new user into the database and redirect to home page
   }else{
-    // mockDB.users[req.body.email] = {
-    //   email: req.body.email,
-    //   password: bcrypt.hashSync(req.body.password, 10),
-    //   first_name: req.body.first_name,
-    //   last_name: req.body.last_name,
-    //   phone_number: req.body.phone_number,
-    // }
-    // knex('customer').join('login', 'login.login_id', '=', 'customer.login_id').insert({
-    //   email: req.body.email,
-    //   password: bcrypt.hashSync(req.body.password, 10),
-    //   first_name: req.body.first_name,
-    //   last_name: req.body.last_name,
-    //   phone_number: req.body.phone_number,
-    // }).asCallback()
-    knex('login').insert({
+    queries.insertIntoCustomers({
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10),
-    }).then(insertCustomer).asCallback()
-
-    function insertCustomer(){
-     return knex('login').select().then (result => {
-        knex('customer').insert({
-          first_name: req.body.first_name,
-          last_name: req.body.last_name,
-          phone_number: req.body.phone_number,
-          login_id: result[result.length - 1].login_id
-        }).asCallback()
-      })
-    }
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      phone_number: req.body.phone_number,
+    });
 
     req.session.email = req.body.email;
     req.session.first_name = req.body.first_name;
