@@ -54,6 +54,7 @@ function selectItemsFromMenu(menuId){
           groupedItems[result[i].name].push(result[i])
         }
       }
+      return groupedItems;
     })
 }
 
@@ -65,13 +66,19 @@ function getPass(email) {
 }
 
 
-/*given cart_id, return, return items in a car (name, description, cost, url)*/
+/*given order_id from orderLines, return items in a cart (name, description, cost, url)*/
 
-
-
-
-
-
+function showCartItems(orderId) {
+  return knex("orderLines")
+    .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
+    .join("items", "menu_items.item_id", "items.item_id")
+    .select("items.name", "items.description", "items.price", "items.url")
+    .where("orderLines.order_id", orderId)
+    .then(result=>{
+      console.log(result)
+    })
+}
+// showCartItems(1) /*for testing*/
 
 
 
