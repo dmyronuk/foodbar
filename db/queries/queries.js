@@ -13,7 +13,8 @@ module.exports = {
   insertIntoLogins,
   insertIntoCustomers,
   selectMenusFromRestaurants,
-  selectItemsFromMenus
+  selectItemsFromMenus,
+  getPass
 }
 
 function insertIntoLogins(obj) {
@@ -43,26 +44,25 @@ function selectItemsFromMenus(menuID){
     .join("categories", "items.category_id", "categories.category_id")
     .select("menu_items.item_name", "items.description", "items.price", "items.url", "categories.name")
     .where("menus.menu_id", menuID)
-    .then(result => {
-      console.log(result)
-    })
-}
-
-selectItemsFromMenus(2)
-
-function getPass(email) {
-  return knex("logins")
-    .select("logins.password")
-    .where("email", email)
     .then(result=>{
       console.log(result)
     })
 }
+selectItemsFromMenus(1)
 
+/*gets a hashed password that matches its email*/
+async function getPass(email) {
+  const logins = await knex("logins")
+    .select("logins.password")
+    .where("email", email)
+    // .then(result=>{
+    //   console.log(result)
+    // })
 
+    return console.log(logins)
+}
 
-
-
+/*given cart_id, return, return items in a car (name, description, cost, url)*/
 
 
 
