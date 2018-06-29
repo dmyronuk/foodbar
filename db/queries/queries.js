@@ -9,44 +9,53 @@ const knex = require('knex')({
   }
 });
 
+module.exports = {
+  insertIntoLogins,
+  insertIntoCustomers,
+  selectMenusFromRestaurants
+}
+
 function insertIntoLogins(obj) {
-  knex("logins").insert({
-    "email": obj.email,//req.body.email,
-    "password": obj.password,//bcrypt.hashSync(req.body.password, 10),
+  return knex("logins").insert({
+    "email": obj.email,
+    "password": obj.password
   }).asCallback()
 }
 
-function insertIntoCustomers(obj) {
-  insertIntoLogins({
-    email:"dasd@HOTMAIL",
-    password:"PASSWORD"
-  })
- return knex("logins").select().then (result => {
+function insertIntoCustomers(obj){
+  insertIntoLogins(obj)
+  return knex("logins").select().then (result => {
     knex("customers").insert({
-      first_name: obj.first_name,//req.body.first_name,
-      last_name: obj.last_name,//req.body.last_name,
-      phone_number: obj.phone_number,//req.body.phone_number,
+      first_name: obj.first_name,
+      last_name: obj.last_name,
+      phone_number: obj.phone_number,
       login_id: result[result.length - 1].login_id
     }).asCallback()
   })
 }
-insertIntoCustomers({
-  first_name: "aasd",
-  last_name: "basd",
-  phone_number: "6475376750",
-})
 
-// function createActiveCart(obj) {
-//   knex("logins").select().then (result => {
-//     knex("orderLines").join()
-//   })
+/*return every item from menu_id with name(of menu), item_name, description, price, url*/
+// function selectItemsFromMenus(menuID){
+//   return knex("menus")
+//     .join("menu_items", "menus.menu_id", "menu_items.menu_id")
+//     .join("items", "menu_items.item_id", "items.item_id")
+//     .select("menu.name", "menu_items.item_name", "items.description", "items.price", "items.url")
+//     .where("menus.menu_id", menuID)
+//     .then(result => {
+//       console.log(result)
+//     })
 // }
 
-module.exports = {}
+// selectItemsFromMenus(1)
 
-
-
-
+function getPass(email) {
+  return knex("logins")
+    .select("logins.password")
+    .where("email", email)
+    .then(result=>{
+      console.log(result)
+    })
+}
 
 
 
@@ -120,3 +129,15 @@ module.exports = {}
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------
+
+
+function selectMenusFromRestaurants(restaurantID){
+  return knex("menus")
+    .join("restaurants", "menus.restaurant_id", "restaurants.restaurant_id")
+    .select("menus.menu_id", "menus.name")
+    .where("menus.restaurant_id", restaurantID)
+}
+
+// function selectItemsFromMenus(menuID){
+
+// }
