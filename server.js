@@ -69,7 +69,7 @@ app.use(express.static(path.join(__dirname, "./public")));
 app.post('/sms', (req, res) => {
   twilioClient.messages
   .create({
-     body: `Hello ${knex.select('first_name').from('customer')}! The order for ${orderNumber} has been received at ${Date.now()}. Your total is ${req.body.total} and your food will arrive in ${knex.select('arrival_time').from('order')}.`,
+     body: `Hello ${knex.select('first_name').from('customer')}! The order for ${knex.select('orderLine_id').from('orderLine')} has been received at ${knex.select('order_date').from('order')}. Your total is ${knex.select('total_price').from('orderLine')} and your food will arrive in ${knex.select('total_prep_time').from('orderLine')}.`,
      from: '+13069940672',
      to: '+16475376750'
    })
