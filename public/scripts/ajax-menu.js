@@ -1,62 +1,67 @@
 function addMenuItemHandler(event){
-  let item_id = $(event.target).attr("item_id");
+  event.preventDefault();
+  var $target = $(event.target);
+  var id = $target.attr("id");
 
   $.ajax({
     type: "POST",
-    url: `/items/${item_id}`,
+    data: $target.serialize(),
+    url: `/items/${id}`,
     success: function(data){
-      console.log(data);
+      console.log("data sent back from server: ", data);
     }
   })
 }
 
 function createMenuItem(dataRow){
-  console.log(dataRow.imageURL)
-  let $item = $(`
-      <div class="menu-item">
+  var $item = $(`
+    <div class="menu-item">
+      <div>
+        <img src=${dataRow.imageURL}>
+      </div>
+      <div class="item-description-container">
+        <h4>
+          ${dataRow.name}
+        </h4>
         <div>
-          <img src=${dataRow.imageURL}>
+          ${dataRow.description}
         </div>
-        <div class="item-description-container">
-          <h4>
-            ${dataRow.name}
-          </h4>
+        <div>
           <div>
-            ${dataRow.description}
-          </div>
+            ${dataRow.price}
           <div>
-            <div>
-              ${dataRow.price}
-            <button item_id=${dataRow.id} class="add-to-cart">Add</button>
+            <form id="${dataRow.id}">
+              <input name="quantity" type="text" value=1>
+              <input type="submit" value="Add" class="add-to-cart">
+            </form>
           </div>
         </div>
       </div>
-    `)
+    </div>
+  `);
+  $item.find("form").on("submit", addMenuItemHandler);
   return $item;
 };
 
 function appendMenuItem($item){
-  $item.on("click", addMenuItemHandler);
   $(".menu-item-container").append($item);
 };
 
 $(document).ready(function(){
-  console.log("hello");
 
   $(".menu_img").on("click", function(event){
-    let $target = $(event.target);
+    var $target = $(event.target);
     var menu_id = $target.attr("menu_id");
-    console.log("menu_id: ", menu_id);
 
     $.ajax({
       type: "GET",
       url: `/menus/${menu_id}`,
       contentType: "application/json",
       success: function(data){
-        let $container = $(".menu-item-container");
+        var $container = $(".menu-item-container");
         $container.empty();
         for(var i=0; i<15; i++){
-          let $curItem = createMenuItem(data);
+          var $curItem = createMenuItem(data);
           appendMenuItem($curItem);
         }
        }

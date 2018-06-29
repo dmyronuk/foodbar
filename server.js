@@ -111,6 +111,8 @@ app.get("/menus/:menu_id", (req, res) => {
   res.json(outData);
 })
 
+//get the restaurant page and display menus
+//once in this route, it should behave like a single page application - lots of ajax
 app.get("/restaurants/:id", (req, res) => {
   let restaurantId = req.params.id;
   let lunch_menu_id = 1;
@@ -128,11 +130,20 @@ app.get("/restaurants/:id", (req, res) => {
   }
 })
 
+
+//add item to logged in user cart
 app.post("/items/:id", (req, res) => {
   let item_id_exists = true // once db hooked up, check that item exists in db
+  let id = req.params.id;
+  let quantity = req.body.quantity;
+
   if(item_id_exists){
-    mockDB.cart.push(req.params.id);
-    res.json({status:"success"})
+    mockDB.cart.push({
+      id:req.params.id,
+      quantity:req.body.quantity,
+      cost:5*req.body.quantity,
+    });
+    res.json({inData:req.body})
   }else{
     res.json({status:"failed"})
   }
@@ -144,7 +155,14 @@ app.get("/cart", (req, res) => {
   //if user is logged in
   if(req.session.email){
     let items = mockDB.cart;
-    res.json(items);
+    let total = items.reduce((acc, cur) => {
+      acc += cur.quantity * cur.cost;
+      return acc
+    },0);
+    res.json({
+      items: items,
+      total: total,
+    });
 
   //else forbidden, user is not logged in
   }else{
@@ -182,7 +200,6 @@ app.get("/login", (req, res) => {
 app.post("/login", (req,res) => {
   let email = req.body.email;
   let password = req.body.password;
-  console.log(req.body)
 
   //check that post request contains an email and password
   let login_field_errs = [];
@@ -228,13 +245,13 @@ app.get("/signup", (req, res) => {
     first_name:req.session.first_name,
     signup_field_errs:signup_field_errs,
   }
-  console.log("DB: ", mockDB);
   res.render("signup", templateVars);
 });
 
 app.post("/signup", (req, res) => {
   let fields = ["email", "password", "first_name", "last_name", "phone_number"]
   let signup_field_errs = [];
+  console.log("body:", req.body)
   for(field of fields){
     if(! req.body[field]){
       let formattedField = prettyFormatFormField(field);
