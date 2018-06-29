@@ -9,40 +9,32 @@ const knex = require('knex')({
   }
 });
 
+module.exports = {
+  insertIntoLogins,
+  insertIntoCustomers,
+  selectMenusFromRestaurants
+}
+
 function insertIntoLogins(obj) {
-  knex("logins").insert({
-    "email": obj.email,//req.body.email,
-    "password": obj.password,//bcrypt.hashSync(req.body.password, 10),
+  return knex("logins").insert({
+    "email": obj.email,
+    "password": obj.password
   }).asCallback()
 }
 
 function insertIntoCustomers(obj){
-  insertIntoLogins({
-    email:"dasd@HOTMAIL",
-    password:"PASSWORD"
-  })
- return knex("logins").select().then (result => {
+  insertIntoLogins(obj)
+  return knex("logins").select().then (result => {
     knex("customers").insert({
-      first_name: obj.first_name,//req.body.first_name,
-      last_name: obj.last_name,//req.body.last_name,
-      phone_number: obj.phone_number,//req.body.phone_number,
+      first_name: obj.first_name,
+      last_name: obj.last_name,
+      phone_number: obj.phone_number,
       login_id: result[result.length - 1].login_id
     }).asCallback()
   })
 }
-insertIntoCustomers({
-  first_name: "aasd",
-  last_name: "basd",
-  phone_number: "6475376750",
-})
-// knex("customer").join("order", "order.customer id", "=", "customer.customer_id").join("customer", "customer.login_id", "=", "login.login_id").select()
-// .where({
 
-// }).then (result => {
 
-// })
-
-module.exports = {}
 
 
 
@@ -120,3 +112,15 @@ module.exports = {}
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------
+
+
+function selectMenusFromRestaurants(restaurantID){
+  return knex("menus")
+    .join("restaurants", "menus.restaurant_id", "restaurants.restaurant_id")
+    .select("menus.menu_id", "menus.name")
+    .where("menus.restaurant_id", restaurantID)
+}
+
+function selectItemsFromMenus(menuID){
+
+}
