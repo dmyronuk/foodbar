@@ -78,11 +78,6 @@ app.post('/sms', (req, res) => {
   res.redirect('/')
 });
 
-const validatePassword = (db, email, plaintextPassword) => {
-  let hashedPassword = db.users[email]["password"];
-  return bcrypt.compareSync(plaintextPassword, hashedPassword);
-};
-
 //remove underscores and cap first letter
 let prettyFormatFormField = (field_val) => {
   let wordArr = field_val.split("_");
@@ -239,23 +234,29 @@ app.post("/login", (req,res) => {
     req.session.login_field_errs = login_field_errs;
     res.redirect("/login");
   }else{
-    //if username doesn't exist in db
-    if(! mockDB.users[email]){
+    //if username doesn't exist in db -- need function here
+    if(false){
       req.session.login_validation_err = "Login Does Not Exist";
       res.redirect("/login");
+
     //usename exists so now check if passwords match
     }else{
-      //login success
-      if(validatePassword(mockDB, req.body.email, req.body.password)){
-        req.session.email = email;
-        req.session.first_name = req.body.first_name;
-        res.redirect("/");
 
-      //incorrect password
-      }else{
-        req.session.login_validation_err = "Incorrect Email Or Password";
-        res.redirect("/login");
-      }
+      queries.getPass(req.body.email).then(result => {
+        let dbHash = result[0].password;
+
+        //if password matches hash
+        if(bcrypt.compareSync(req.body.password, dbHash)){
+          req.session.email = email;
+          req.session.first_name = req.body.first_name;
+          res.redirect("/");
+
+        //incorrect password
+        }else{
+          req.session.login_validation_err = "Incorrect Email Or Password";
+          res.redirect("/login");
+        }
+      });
     }
   }
 })
@@ -279,7 +280,7 @@ app.get("/signup", (req, res) => {
 app.post("/signup", (req, res) => {
   let fields = ["email", "password", "first_name", "last_name", "phone_number"]
   let signup_field_errs = [];
-  console.log("body:", req.body)
+
   for(field of fields){
     if(! req.body[field]){
       let formattedField = prettyFormatFormField(field);
@@ -290,22 +291,16 @@ app.post("/signup", (req, res) => {
   //one or more fields failed so we need to redirect back to signup
   if(signup_field_errs.length > 0){
     res.redirect("/signup");
+
   //success - push the new user into the database and redirect to home page
   }else{
-    // mockDB.users[req.body.email] = {
-    //   email: req.body.email,
-    //   password: bcrypt.hashSync(req.body.password, 10),
-    //   first_name: req.body.first_name,
-    //   last_name: req.body.last_name,
-    //   phone_number: req.body.phone_number,
-    // }
-    // knex('customer').join('login', 'login.login_id', '=', 'customer.login_id').insert({
-    //   email: req.body.email,
-    //   password: bcrypt.hashSync(req.body.password, 10),
-    //   first_name: req.body.first_name,
-    //   last_name: req.body.last_name,
-    //   phone_number: req.body.phone_number,
-    // }).asCallback()
+    queries.insertIntoCustomers({
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 10),
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      phone_number: req.body.phone_number,
+    });
 
     req.session.email = req.body.email;
     req.session.first_name = req.body.first_name;
