@@ -279,10 +279,9 @@ exports.seed = function(knex, Promise) {
   }
 
   async function insertOrderLines(){
-    // const orders = await knex("orders").select()
-    // // const menuItems = await knex("menu_items").select()
-    // console.log(orders)
-    // console.log(menuItems)
+    const orders = await knex("orders").select()
+    const menuItems = await knex("menu_items").select()
+    // const initialInsert =  knex("menu_items").select()
     // knex("orderLines").insert([
     //   {
     //     order_id: orders[0].order_id,
@@ -290,6 +289,9 @@ exports.seed = function(knex, Promise) {
     //     quantity: 2
     //   }
     // ]).asCallback()
+    console.log(orders)
+    console.log(menuItems)
+    // console.log(initialInsert)
   }
 
   return deleteOrderLines()
@@ -309,5 +311,7 @@ exports.seed = function(knex, Promise) {
     .then(insertMenus)
     .then(insertMenuItems)
     .then(insertOrders)
+    .then(insertOrders)
+    // .then(insertMenuItems)
     .then(insertOrderLines)
 };
