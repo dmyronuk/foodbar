@@ -270,14 +270,14 @@ app.post("/signup", (req, res) => {
     //   last_name: req.body.last_name,
     //   phone_number: req.body.phone_number,
     // }).asCallback()
-    knex('login').insert({
+    knex('logins').insert({
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 10),
     }).then(insertCustomer).asCallback()
 
     function insertCustomer(){
-     return knex('login').select().then (result => {
-        knex('customer').insert({
+     return knex('logins').select().then (result => {
+        knex('customers').insert({
           first_name: req.body.first_name,
           last_name: req.body.last_name,
           phone_number: req.body.phone_number,
