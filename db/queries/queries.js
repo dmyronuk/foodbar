@@ -122,5 +122,14 @@ function selectMenusFromRestaurants(restaurantID){
 }
 
 function selectItemsFromMenus(menuID){
-
+  return knex("menu_items")
+    .join("items", "menu_items.item_id", "items.item_id")
+    .join("menus", "menu_items.menu_id", "menus.menu_id")
+    .select("items.name", "items.name", "items.name", )
+    .where("menus.menu_id", menuID)
 }
+
+
+selectItemsFromMenus(47).then(result => {
+  console.log(result);
+})
