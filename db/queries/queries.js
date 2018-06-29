@@ -17,12 +17,89 @@ knex('logins').insert({
 function insertCustomer(arguments){
  return knex('logins').select().then (result => {
     knex('customers').insert({
-      // first_name: req.body.first_name,
-      // last_name: req.body.last_name,
-      // phone_number: req.body.phone_number,
-      // login_id: result[result.length - 1].login_id
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      phone_number: req.body.phone_number,
+      login_id: result[result.length - 1].login_id
     }).asCallback()
   })
 }
 
 module.exports = {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------
