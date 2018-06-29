@@ -248,7 +248,6 @@ app.post("/login", (req,res) => {
         //if password matches hash
         if(bcrypt.compareSync(req.body.password, dbHash)){
           req.session.email = email;
-          req.session.first_name = req.body.first_name;
           res.redirect("/");
 
         //incorrect password
