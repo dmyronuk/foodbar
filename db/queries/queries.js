@@ -47,6 +47,36 @@ function selectItemsFromMenu(menuId){
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function getPass(email) {
   return knex("logins")
     .select("logins.password")
