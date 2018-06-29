@@ -92,23 +92,37 @@
     text-align:left;
     vertical-align:middle;
     color:$default-text-color;
+
     h4{
       color:$default-heading-color;
     }
 
-    button{
-      margin-left:1rem;
-      font-size:1.2rem;
-      border:none;
-      padding:0.1rem 0.7rem 0.1rem 0.7rem;
-      cursor:pointer;
-      color:white;
-      background-color:blue;
-      transition:background-color 1s;
-      border-radius:0.2rem;
+    div{
+      position:relative;
+    }
 
-      &:hover{
-        background-color:#4c4cff;
+    form{
+      input{
+        border-radius:1rem;
+        border:1px solid black;
+        width:4em;
+        text-align:center;
+        margin: 0 1rem 0 1rem;
+      }
+
+      .add-to-cart{
+        font-size:1.2rem;
+        border:none;
+        padding:0.1rem 0.7rem 0.1rem 0.7rem;
+        cursor:pointer;
+        color:white;
+        background-color:blue;
+        transition:background-color 1s;
+        border-radius:0.2rem;
+
+        &:hover{
+          background-color:#4c4cff;
+        }
       }
     }
   }
