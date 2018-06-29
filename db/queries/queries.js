@@ -15,7 +15,8 @@ module.exports = {
   selectMenusFromRestaurants,
   selectItemsFromMenu,
   getPass,
-  selectEmailFromCustomer
+  selectEmailFromCustomer,
+  selectAllInfoFromRestaurants
 }
 
 function insertIntoLogins(obj) {
@@ -150,3 +151,15 @@ function selectEmailFromCustomer(customerId){
     .select("logins.email")
     .where("customers.customer_id", customerId)
 }
+
+function selectAllInfoFromRestaurants(restaurantId){
+  return knex("restaurants")
+    .join("logins", "restaurants.login_id", "logins.login_id")
+    .select("restaurants.name", "restaurants.address", "restaurants.phone_number", "logins.email")
+    .where("restaurants.restaurant_id", restaurantId)
+}
+
+
+// selectAllInfoFromRestaurants().then(result=>{
+//   console.log(result)
+// })
