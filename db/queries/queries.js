@@ -10,13 +10,21 @@ const knex = require('knex')({
 });
 
 module.exports = {
+  // function insertIntoLogins(obj)
   insertIntoLogins,
+  // function insertIntoCustomers(obj)
   insertIntoCustomers,
+// function selectItemsFromMenu(menuId)
   selectMenusFromRestaurants,
+
   selectItemsFromMenu,
+
   getPass,
+
   selectEmailFromCustomer,
+
   selectAllInfoFromRestaurants,
+  
   showCartItems
 }
 
