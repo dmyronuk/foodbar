@@ -13,7 +13,8 @@ module.exports = {
   insertIntoLogins,
   insertIntoCustomers,
   selectMenusFromRestaurants,
-  selectItemsFromMenu
+  selectItemsFromMenu,
+  getPass,
 }
 
 function insertIntoLogins(obj) {
@@ -46,13 +47,40 @@ function selectItemsFromMenu(menuId){
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function getPass(email) {
   return knex("logins")
     .select("logins.password")
     .where("email", email)
-    .then(result=>{
-      console.log(result)
-    })
 }
 
 
