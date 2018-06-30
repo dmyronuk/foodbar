@@ -20,10 +20,21 @@ function removeCartItemHandler(event){
     data: $target.parent().serialize(),
     url: `/cart/items/${id}/delete`,
     success: function(data){
-      console.log("data sent back from server: ", data);
+      //when item is deleted, remove line in cart from DOM
+      console.log(data);
+      updateDOMCart(data, $target);
     }
   })
 }
+
+function updateDOMCart(data, $target){
+  //subtotal-td tax-td total-td
+  $target.closest("tr").remove();
+  $("#subtotal-td").html("$" + data.subTotal);
+  $("#tax-td").html("$" + data.tax);
+  $("#total-td").html("$" + data.total);
+  $("#total-footer").html("$" + data.total);
+};
 
 function createDOMCart(data){
   var cart = data.cart;
@@ -40,7 +51,7 @@ function createDOMCart(data){
       <section>
       </section>
       <footer>
-        <div>
+        <div id="total-footer">
           Total: &#36;${data.total}
         </div>
         <button id="confirm-order">Confirm Order</button>
@@ -80,23 +91,23 @@ function createDOMCart(data){
     });
 
     $table.append(`
-      <tr class="spacer-row">
+      <tr class="spacer-row summary-row">
         <td colspan=4></td>
       </tr>
-      <tr>
+      <tr class="summary-row">
           <td colspan=2></td>
           <td right-align-td>Subtotal: </td>
-          <td class="right-align-td">&#36;${data.subTotal}</td>
+          <td id="subtotal-td" class="right-align-td">&#36;${data.subTotal}</td>
       </tr>
-      <tr>
+      <tr class="summary-row">
           <td colspan=2></td>
           <td class="right-align-td">Tax: </td>
-          <td class="right-align-td">&#36;${data.tax}</td>
+          <td id="tax-td" class="right-align-td">&#36;${data.tax}</td>
       </tr>
-      <tr>
+      <tr class="summary-row">
           <td colspan=2></td>
           <td class="right-align-td">Total: </td>
-          <td class="right-align-td">&#36;${data.total}</td>
+          <td id="total-td" class="right-align-td">&#36;${data.total}</td>
       </tr>
     `)
     $cart.find("section").append($table);

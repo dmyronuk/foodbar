@@ -159,7 +159,16 @@ app.post("/cart/items/:id/delete", (req, res) => {
 
   if(req.session.cart && req.session.cart[id]){
     delete req.session.cart[id];
-    res.json({status:"success"})
+
+    let subTotal = calculateCartTotal(req.session.cart);
+    let tax = subTotal * 0.13;
+    let total = subTotal + tax;
+
+    res.json({
+      subTotal: subTotal.toFixed(2),
+      tax: tax.toFixed(2),
+      total: total.toFixed(2)
+    });
   }else{
     res.json({status:"failed"})
   }
