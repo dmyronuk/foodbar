@@ -75,6 +75,12 @@ exports.seed = function(knex, Promise) {
           first_name: "Adib",
           last_name: "Al-Amir",
           phone_number: "6476096899"
+        },
+        {
+          login_id: result[2].login_id,
+          first_name: "D'Arcy",
+          last_name: "Myronuk",
+          phone_number: "6476096899"
         }
       ]).asCallback();
     });
@@ -118,15 +124,15 @@ exports.seed = function(knex, Promise) {
     return knex("categories").select().then(result => {
       knex("items").insert([
         {
-          category_id: result[0].category_id,
+          category_id: result[0].category_id,//0
           name: "Spicy Nachos",
           price: 1099,
           description: "Our signature nachos, but extra HOT!",
           url: "",
           prep_time: 10
-        },      
+        },
         {
-          category_id: result[0].category_id,
+          category_id: result[0].category_id,//1
           name: "Nachos",
           price: 1099,
           description: "Our signature four cheese nachos.",
@@ -134,7 +140,7 @@ exports.seed = function(knex, Promise) {
           prep_time: 10
         },
         {
-          category_id: result[0].category_id,
+          category_id: result[0].category_id,//2
           name: "Sweet Potato Fries",
           price: 899,
           description: "Crispy PEI sweet potato fires.",
@@ -142,64 +148,69 @@ exports.seed = function(knex, Promise) {
           prep_time: 5
         },
         {
-          category_id: result[1].category_id,
+          category_id: result[1].category_id,//3
           name: "Philly Cheesesteak",
           price: 1399,
           description: "Sirloin steak sandwich with our signature cheese mix.",
           url: "",
           prep_time: 10
         },
-
         {
-          category_id: result[1].category_id,
-          name: "Spicy Philly Cheesesteak",
-          price: 1399,
-          description: "Sirloin steak sandwich with our signature cheese mix.",
-          url: "",
-          prep_time: 10
-        },
-        {
-          category_id: result[1].category_id,
+          category_id: result[1].category_id,//4
           name: "Kobe Ribeye Steak",
           price: 9999,
           description: "12 oz Kobe beef ribeye steak. Served with fries.",
-          url: "",
+          url: "../../public/images/kobe-ribeye-steak.jpg",
           prep_time: 15
         },
         {
-          category_id: result[1].category_id,
+          category_id: result[1].category_id,//5
           name: "Grilled Salmon",
           price: 2999,
-          description: "Atlantic salmon, pan fried, with maple glaze. Served with fries.",
-          url: "",
+          description: "Atlantic salmon, grilled, with maple glaze. Served with fries.",
+          url: "../../public/images/grilled-atlantic-salmon.jpg",
           prep_time: 15
         },
         {
-          category_id: result[2].category_id,
+          category_id: result[2].category_id,//6
           name: "Pepsi",
           price: 399,
           description: "Pepsi",
-          url: "",
+          url: "../../public/images/pepsi.jpg",
           prep_time: 1
         },
-
         {
-          category_id: result[2].category_id,
+          category_id: result[2].category_id,//7
           name: "Diet Pepsi",
           price: 399,
           description: "Diet Pepsi",
-          url: "",
+          url: "../../public/images/diet-pepsi.jpg",
           prep_time: 1
         },
-
         {
-          category_id: result[2].category_id,
+          category_id: result[2].category_id,//8
           name: "Canada Dry",
           price: 399,
           description: "Canada Dry ginger ale",
-          url: "",
+          url: "../../public/images/canada-dry.jpg",
           prep_time: 1
         },
+        {
+          category_id: result[1].category_id,//9
+          name: "Speghetti Donuts",
+          price: 699,
+          description: "Homemade spaghetti noodles made with freshly made doughnut batter.",
+          url: "../../public/images/spaghetti-donuts.jpg",
+          prep_time: 1
+        },
+        {
+          category_id: result[1].category_id,//10
+          name: "Hot Fried Chicken with Burmese Buffalo Sauce",
+          price: 1899,
+          description: "Homemade spaghetti noodles made with freshly made doughnut batter.",
+          url: "../../public/images/Hot-Fried-Chicken.jpg",
+          prep_time: 1
+        }
       ]).asCallback();
     });
   }
@@ -228,16 +239,34 @@ exports.seed = function(knex, Promise) {
   	const menus = await knex("menus").select()
     return knex("menu_items").insert([
       {
-        menu_id: menus[0].menu_id,
+        menu_id: menus[0].menu_id,//LUNCH MENU STARTS HERE
         menu_name: menus[0].name,
         item_id: items[0].item_id,
         item_name: items[0].name
       },
       {
-        menu_id: menus[1].menu_id,
-        menu_name: menus[1].name,
-        item_id: items[0].item_id,
-        item_name: items[0].name
+        menu_id: menus[0].menu_id,
+        menu_name: menus[0].name,
+        item_id: items[1].item_id,
+        item_name: items[1].name
+      },
+      {
+        menu_id: menus[0].menu_id,
+        menu_name: menus[0].name,
+        item_id: items[2].item_id,
+        item_name: items[2].name
+      },
+      {
+        menu_id: menus[0].menu_id,
+        menu_name: menus[0].name,
+        item_id: items[3].item_id,
+        item_name: items[3].name
+      },
+      {
+        menu_id: menus[0].menu_id,
+        menu_name: menus[0].name,
+        item_id: items[6].item_id,
+        item_name: items[6].name
       },
       {
         menu_id: menus[0].menu_id,
@@ -252,10 +281,28 @@ exports.seed = function(knex, Promise) {
         item_name: items[8].name
       },
       {
-        menu_id: menus[0].menu_id,
-        menu_name: menus[0].name,
-        item_id: items[9].item_id,
-        item_name: items[9].name
+        menu_id: menus[1].menu_id,//DINNER MENU STARTS HERE
+        menu_name: menus[1].name,
+        item_id: items[2].item_id,
+        item_name: items[2].name
+      },
+      {
+        menu_id: menus[1].menu_id,
+        menu_name: menus[1].name,
+        item_id: items[4].item_id,
+        item_name: items[4].name
+      },
+      {
+        menu_id: menus[1].menu_id,
+        menu_name: menus[1].name,
+        item_id: items[5].item_id,
+        item_name: items[5].name
+      },
+      {
+        menu_id: menus[1].menu_id,
+        menu_name: menus[1].name,
+        item_id: items[6].item_id,
+        item_name: items[6].name
       },
       {
         menu_id: menus[1].menu_id,
@@ -272,8 +319,8 @@ exports.seed = function(knex, Promise) {
       {
         menu_id: menus[1].menu_id,
         menu_name: menus[1].name,
-        item_id: items[9].item_id,
-        item_name: items[9].name
+        item_id: items[10].item_id,
+        item_name: items[10].name
       }
     ]).asCallback()
   }
@@ -308,7 +355,7 @@ exports.seed = function(knex, Promise) {
         status: "In Progress",
         total_price: 1 * menuItems[5].price,
         total_prep_time: 1 * menuItems[5].prep_time
-      }
+      },
     ]).asCallback()
 
   }
