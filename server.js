@@ -142,25 +142,37 @@ app.get("/restaurants/:id", (req, res) => {
 
 //delete item from logged-in user cart
 app.post("/cart/items/:id/delete", (req, res) => {
-  console.log("deleting item from cart")
+  let id = req.params.id;
+  console.log("id", id);
+
+  if(req.session.cart && req.session.cart[id]){
+    delete req.session.cart[id];
+    res.json({status:"success"})
+  }else{
+    res.json({status:"failed"})
+  }
 });
 
 //add item to logged-in user cart
 app.post("/cart/items/:id", (req, res) => {
   let item_id_exists = true // once db hooked up, check that item exists in db
   let id = req.params.id;
-  let quantity = req.body.quantity;
+  let quantity = Number(req.body.quantity);
 
   if(item_id_exists){
+    let sessionItem = req.session.cart[id];
 
     //check to see if there are any of this item already in cart - if yes
-    if(req.session.cart[id]){
-      req.session.cart[id].quantity += 1;
+    if(sessionItem){
+      sessionItem.quantity = Number(sessionItem.quantity) + quantity;
 
     }else{
-      req.session.cart[id] = req.body;
+      sessionItem = req.body;
+      sessionItem.quantity = quantity;
     }
 
+    req.session.cart[id] = sessionItem;
+    console.log("new quantity: ", sessionItem.quantity)
     res.json({inData:req.body})
   }else{
     res.json({status:"failed"})
@@ -174,10 +186,11 @@ app.get("/cart", (req, res) => {
   //if user is logged in
   if(req.session.email){
     let cart = req.session.cart;
+    console.log(cart);
 
     let subTotal = Object.keys(cart).reduce((acc, cur) => {
       let curObj = cart[cur];
-      acc += curObj.price / 100;
+      acc += curObj.price * curObj.quantity / 100;
       return acc
     },0);
 

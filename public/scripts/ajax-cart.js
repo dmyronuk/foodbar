@@ -6,6 +6,21 @@ function cartSubmitHandler(){
 
 };
 
+function removeCartItemHandler(event){
+  event.preventDefault();
+  var $target = $(event.target);
+  var id = $target.attr("id");
+
+  $.ajax({
+    type: "POST",
+    data: $target.serialize(),
+    url: `/cart/items/${id}/delete`,
+    success: function(data){
+      console.log("data sent back from server: ", data);
+    }
+  })
+}
+
 function createDOMCart(data){
   var cart = data.cart;
   var cartKeys = Object.keys(cart);
@@ -46,7 +61,10 @@ function createDOMCart(data){
       var $curRow = $(`
         <tr>
           <td>
-            <button class="cart-remove-button">remove</button>
+            <form id="${key}">
+              <input name="item_id" type="hidden" value="${key}">
+              <input type="submit" value="remove" class="cart-remove-button">
+            </form>
           </td>
           <td>${curObj.item_name}</td>
           <td class="center-align-td">${curObj.quantity}</td>
@@ -86,6 +104,7 @@ function createDOMCart(data){
 
   var $mask = $(`<div class="page-mask"></div>`);
   var $body = $("body");
+  $cart.find(".cart-remove-button").on("click", removeCartItemHandler);
   $body.prepend($mask);
   $body.prepend($cart);
 };

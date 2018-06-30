@@ -35,10 +35,11 @@
       background:none;
       color:blue;
       transition:color 1s;
+      background:#cccccc;
 
       &:hover{
+        background:#bbbbbb;
         color:#4d4dff;
-        background:none;
       }
     }
 
