@@ -202,6 +202,18 @@ app.get("/cart", (req, res) => {
 
 //confirm checkout -- twilio db stuff and twilio text goes in here
 app.post("/cart", (req, res) => {
+  const cart = req.session.cart
+  let arr = Object.keys(cart).reduce((acc, cur) => {
+    let curObj = cart[acc]
+    curObj.item_id = cur;
+    acc.push(curObj)
+    return acc
+  }, [])
+
+  // let arr = Object.keys(cart).map(function (key){
+  //   return queries.insertIntoOrderLines(cart[key]);
+  // });
+  console.log(arr);
 
 })
 

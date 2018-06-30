@@ -252,13 +252,12 @@ async function insertIntoOrderLines(obj) {
       ]).then()
 }
 
-// const obj ={
-//   email: "user1@gmail.com",
-//   item_id: 1,
-//   menu_id: 1,
-//   quantity: 50,
-//   total_prep_time: 10
-// }
+const obj ={
+  email: "user1@gmail.com",
+  item_id: 1,
+  quantity: 50,
+  total_prep_time: 10
+}
 
 // insertIntoOrderLines(obj)
 
