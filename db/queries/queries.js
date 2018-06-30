@@ -24,8 +24,8 @@ module.exports = {
   selectCustomerFromEmail,
 // function selectAllInfoFromRestaurants(restaurantId)
   selectAllInfoFromRestaurants,
-// function showCartItems(orderId)
-  showCartItems
+// function showCartItemsFromEmail(email)
+  showCartItemsFromEmail
 }
 
 function insertIntoLogins(obj) {
@@ -77,12 +77,15 @@ function getPass(email) {
 }
 
 /*given an order_id, shows items in a cart*/
-function showCartItems(orderId) {
+function showCartItemsFromEmail(email) {
   return knex("orderLines")
+    .join("orders", "orderLines.order_id", "orders.order_id")
     .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
     .join("items", "menu_items.item_id", "items.item_id")
+    .join("customers", "orders.customer_id", "customers.customer_id")
+    .join("logins", "customers.login_id", "logins.login_id")
     .select("items.name", "items.description", "items.price", "items.url")
-    .where("orderLines.order_id", orderId)
+    .where("logins.email", email)
 }
 // showCartItems(1) /*for testing*/
 
@@ -184,38 +187,25 @@ function selectAllInfoFromRestaurants(restaurantId){
 }
 
 
-function insertItemIntoCart(email, itemId){
+function selectOrderLines(){
   /*
     1. create order
     2. pull orderLines table containing all information, including the newly created order
     3. insert item into orderLines from item_id.... use another async function??? 
 
   */
-  return knex("orders")
-    .join("customers", "orders.customer_id", "customers.customer_id")
-    .join("logins", "customers.login_id", "logins.login_id")
-    .select()
-    .where("logins.email", email)
-    .then(result =>{
-      knex("orders")
-      .insert({
-        customer_id: result[0].customer_id
-      })
-      .select()
-      .then((result)=>{
-        console.log(result)
-        knex("orderLines")
+  return knex("orderLines")
         .join("orders", "orderLines.order_id", "orders.order_id")
-        // .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
-        // .join("items", "menu_items.item_id", "items.item_id")
-        // .join("customers", "orders.customer_id", "customers.customer_id")
-        // .join("logins", "customers.login_id", "logins.login_id")
-        .select("orders")
+        .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
+        .join("items", "menu_items.item_id", "items.item_id")
+        .join("customers", "orders.customer_id", "customers.customer_id")
+        .join("logins", "customers.login_id", "logins.login_id")
+        .select()
         // .then((result) =>{
         //   console.log(result)
         // })
-      })
-    })
+
+
 
 
   
@@ -250,8 +240,18 @@ function insertOrder(email){
     })  
 }
 
+
+async function combine(email){
+  const x = await insertOrder(email)
+  const y = await selectOrderLines()
+
+  return y
+}
 // insertItemIntoCart("user1@gmail.com")
-// .then(result =>{
-//   console.log(result)
-// })
+// insertOrder("user1@gmail.com")
+// .then(selectOrderLines)
+showCartItemsFromEmail("user1@gmail.com")
+.then(result =>{
+  console.log(result)
+})
 // queryOrder("user1@gmail.com")
