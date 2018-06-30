@@ -1,6 +1,3 @@
-function cartCancelHandler(){
-
-};
 
 function confirmOrderHandler(event){
   $.ajax({
@@ -18,7 +15,6 @@ function removeCartItemHandler(event){
   var id = $target.attr("id");
   console.log($target.parent().serialize())
 
-
   $.ajax({
     type: "POST",
     data: $target.parent().serialize(),
@@ -32,7 +28,6 @@ function removeCartItemHandler(event){
 function createDOMCart(data){
   var cart = data.cart;
   var cartKeys = Object.keys(cart);
-  console.log(data.cart);
 
   //the tables for the checkout line items go in <section>
   var $cart = $(`

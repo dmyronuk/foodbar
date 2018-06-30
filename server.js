@@ -8,6 +8,7 @@ const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
 
 const queries = require("./db/queries/queries.js");
+const twilioNumber = '+13069940672'; //later load from ENV VARIABLE
 
 const mockDB = {
   users:{},
@@ -55,17 +56,42 @@ app.use(nodeSassMiddleware({
 app.use(express.static(path.join(__dirname, "./public")));
 
 /*-----Twilio--------*/
-app.post('/sms', (req, res) => {
-  twilioClient.messages
-  .create({
-     body: `Hello ${knex.select('first_name').from('customer')}! The order for ${knex.select('orderLine_id').from('orderLine')} has been received at ${knex.select('order_date').from('order')}. Your total is ${knex.select('total_price').from('orderLine')} and your food will arrive in ${knex.select('total_prep_time').from('orderLine')}.`,
-     from: '+13069940672',
-     to: '+16475376750'
-   })
-  .then(message => console.log(message.sid))
-  .done();
-  res.redirect('/')
-});
+// app.post('/sms', (req, res) => {
+//   twilioClient.messages
+//   .create({
+//      body: `Hello ${knex.select('first_name').from('customer')}! The order for ${knex.select('orderLine_id').from('orderLine')} has been received at ${knex.select('order_date').from('order')}. Your total is ${knex.select('total_price').from('orderLine')} and your food will arrive in ${knex.select('total_prep_time').from('orderLine')}.`,
+//      from: twilioNumber,
+//      to: '+16475376750'
+//    })
+//   .then(message => console.log(message.sid))
+//   .done();
+//   res.redirect('/')
+// });
+
+//pret time in minutes
+const getReadyTimeStr = (prepTime) => {
+  let curDate = new Date();
+  let readyTimeMs = curDate.getTime() + 1000 * 60 * prepTime;
+  let readyTime = new Date(readyTimeMs);
+
+  let hours = readyTime.getHours();
+  let minutes = readyTime.getMinutes();
+  let suffix = "am"
+  if(hours > 12){
+    hours -= 12;
+    suffix = "pm";
+  }
+  let outStr = `${hours}:${minutes}${suffix}`;
+}
+
+//data: first_name, restaurant_name, total_cost, ready_time
+const createSMSString = (data) => {
+  return `Hello ${data.first_name}!
+  Your order from ${data.restaurant_name} has been placed.
+  It will be ready at approximately ${data.ready_time}.
+  Total amount: ${data.total_cost}
+  `
+}
 
 //remove underscores and cap first letter
 const prettyFormatFormField = (field_val) => {
@@ -200,16 +226,44 @@ app.get("/cart", (req, res) => {
   }else{
     res.status(403);
   }
-})
+});
 
 //confirm checkout -- twilio db stuff and twilio text goes in here
 app.post("/cart", (req, res) => {
+  let cart = req.session.cart;
   let subTotal = calculateCartTotal(req.session.cart);
-  console.log("SubTotal ", subTotal);
+  let tax = subTotal * 0.13;
+  let total_cost = subTotal + tax;
+  let ready_time = getReadyTimeStr(40);
 
+  console.log(ready_time);
+  console.log(total_cost);
 
-  res.json("Hey we did it guys")
-})
+  queries.selectCustomerFromEmail(req.session.email).then(result => {
+    console.log(result);
+    let info = result[0];
+    console.log("info:   ", info);
+
+    //data: first_name, restaurant_name, total_cost, ready_time
+    let msg = createSMSString({
+      first_name: info.first_name,
+      restaurant_name: "Good Restaurant",
+      total_cost: total_cost,
+      ready_time: ready_time
+    })
+
+    twilioClient.messages
+    .create({
+       body: msg,
+       from: twilioNumber,
+       to: `+1${info.phone_number.replace("-", "")}`
+    })
+    .then(message => console.log("Twilio SID:", message.sid))
+    .done();
+
+    res.json("Hey we did it guys");
+  })
+});
 
 //Ajax request handler - get all the menu items for a given menu_id
 app.get("/menus/:menu_id", (req, res) => {
@@ -222,7 +276,7 @@ app.get("/menus/:menu_id", (req, res) => {
       beverages:result.beverages,
     });
   })
-})
+});
 
 app.get("/login", (req, res) => {
   //login_field_errs represent missing fields - login validation errors represent some kind of authentication failure
