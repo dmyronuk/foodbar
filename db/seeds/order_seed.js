@@ -166,7 +166,7 @@ exports.seed = function(knex, Promise) {
         {
           category_id: result[2].category_id,//5
           name: "Pepsi",
-          price: 399,
+          price: 199,
           description: "Pepsi",
           url: "../../public/images/pepsi.jpg",
           prep_time: 1
@@ -174,7 +174,7 @@ exports.seed = function(knex, Promise) {
         {
           category_id: result[2].category_id,//6
           name: "Diet Pepsi",
-          price: 399,
+          price: 199,
           description: "Diet Pepsi",
           url: "../../public/images/diet-pepsi.jpg",
           prep_time: 1
@@ -182,7 +182,7 @@ exports.seed = function(knex, Promise) {
         {
           category_id: result[2].category_id,//7
           name: "Canada Dry",
-          price: 399,
+          price: 199,
           description: "Canada Dry ginger ale",
           url: "../../public/images/canada-dry.jpg",
           prep_time: 1
@@ -217,6 +217,14 @@ exports.seed = function(knex, Promise) {
           price: 799,
           description: "Classic homestyle comfort food made with nutty gruyère cheese.",
           url: "../../public/images/mac-and-cheese.jpeg",
+          prep_time: 15
+        },
+        {
+          category_id: result[1].category_id,//12
+          name: "Avocado Bagel",
+          price: 299,
+          description: "Made with seasoned eggs and fresh avocado.",
+          url: "../../public/images/bagel-avocado.jpeg",
           prep_time: 15
         }
       ]).asCallback();
@@ -301,6 +309,12 @@ exports.seed = function(knex, Promise) {
         item_name: items[11].name
       },
       {
+        menu_id: menus[0].menu_id,//bagel avocado
+        menu_name: menus[0].name,
+        item_id: items[12].item_id,
+        item_name: items[12].name
+      },
+      {
         menu_id: menus[1].menu_id,//DINNER MENU STARTS HERE
         menu_name: menus[1].name,//steak
         item_id: items[3].item_id,
@@ -347,7 +361,7 @@ exports.seed = function(knex, Promise) {
         menu_name: menus[1].name,
         item_id: items[11].item_id,
         item_name: items[11].name
-      },
+      }
     ]).asCallback()
   }
 
