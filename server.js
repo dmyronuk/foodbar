@@ -297,19 +297,30 @@ app.post("/signup", (req, res) => {
   if(signup_field_errs.length > 0){
     res.redirect("/signup");
 
-  //success - push the new user into the database and redirect to home page
   }else{
-    queries.insertIntoCustomers({
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 10),
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      phone_number: req.body.phone_number,
-    });
+    //check to see if there's an existing user with this email
+    console.log("email in: ", req.body.email);
+    queries.selectCustomerFromEmail(req.body.email).then(result => {
+      console.log("result:", result)
 
-    req.session.email = req.body.email;
-    req.session.first_name = req.body.first_name;
-    res.redirect("/");
+      //if there is an existing user with the email, reject
+      if(result.length > 0){
+        res.redirect("/signup");
+      //success - push the new user into the database and redirect to home page
+      }else{
+        queries.insertIntoCustomers({
+          email: req.body.email,
+          password: bcrypt.hashSync(req.body.password, 10),
+          first_name: req.body.first_name,
+          last_name: req.body.last_name,
+          phone_number: req.body.phone_number,
+        });
+
+        req.session.email = req.body.email;
+        req.session.first_name = req.body.first_name;
+        res.redirect("/");
+      }
+    })
   }
 });
 
