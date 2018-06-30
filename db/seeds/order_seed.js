@@ -220,7 +220,7 @@ exports.seed = function(knex, Promise) {
           prep_time: 15
         },
         {
-          category_id: result[1].category_id,//12
+          category_id: result[0].category_id,//12
           name: "Avocado Bagel",
           price: 299,
           description: "Made with seasoned eggs and fresh avocado.",
