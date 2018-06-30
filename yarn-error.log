@@ -1,0 +1,51 @@
+Arguments: 
+  /home/vagrant/.nvm/versions/node/v8.9.4/bin/node /home/vagrant/.nvm/versions/node/v8.9.4/bin/yarn install
+
+PATH: 
+  /home/vagrant/bin:/home/vagrant/.local/bin:/home/vagrant/.nvm/versions/node/v8.9.4/bin:/home/vagrant/.rvm/gems/ruby-2.3.5/bin:/home/vagrant/.rvm/gems/ruby-2.3.5@global/bin:/home/vagrant/.rvm/rubies/ruby-2.3.5/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/vagrant/.rvm/bin:/home/vagrant/.rvm/bin
+
+Yarn version: 
+  1.7.0
+
+Node version: 
+  8.9.4
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: EPROTO: protocol error, symlink '../../../project-name/cli.js' -> '/vagrant/week4/midterm/foodbar/node_modules/base-store/node_modules/.bin/project-name'
+
+npm manifest: 
+  {
+    "name": "mid-term-project",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "bcrypt": "^2.0.0",
+      "body-parser": "^1.18.3",
+      "cookie-session": "^2.0.0-beta.3",
+      "ejs": "^2.6.1",
+      "express": "^4.16.3",
+      "knex": "^0.14.6",
+      "node-sass": "git+https://github.com/sass/node-sass.git#v4.7.0",
+      "node-sass-middleware": "^0.11.0",
+      "path": "^0.12.7",
+      "pg": "^7.4.3",
+      "twilio": "^3.17.4",
+      "twilio-chat": "^3.0.1"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
