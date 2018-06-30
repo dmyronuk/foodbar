@@ -87,7 +87,7 @@ function showCartItemsFromEmail(email) {
     .select("items.name", "items.description", "items.price", "items.url")
     .where("logins.email", email)
 }
-showCartItems(1) /*for testing*/
+
 
 
 //Given user email, create a new active cart
@@ -226,24 +226,40 @@ function insertOrder(email){
 
 
 
-function insertIntoOrderLines(obj) {
-  return knex("orderLines")
+async function insertIntoOrderLines(obj) {
+  const x = await knex("orderLines")
         .join("orders", "orders.order_id", "orderLines.order_id")
         .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
         .join("items", "menu_items.item_id", "items.item_id")
         .join("customers", "orders.customer_id", "customers.customer_id")
         .join("logins", "customers.login_id", "logins.login_id")
         .select()
-        .where("items.item_id", obj.item_id)
+        .where(
+          {
+            "logins.email": obj.email,
+            "items.item_id": obj.item_id,
+          })
+  return knex("orderLines").insert([
+      {
+        order_id: x[0].order_id,
+        menu_item_id: x[0].menu_item_id,
+        quantity: obj.quantity,
+        status: "In Progress",
+        total_price: obj.quantity * x[0].price,
+        total_prep_time: obj.total_prep_time
+      }
+      ]).then()
 }
 
-var obj ={
-  item_id: 299
-}
+// const obj ={
+//   email: "user1@gmail.com",
+//   item_id: 1,
+//   menu_id: 1,
+//   quantity: 50,
+//   total_prep_time: 10
+// }
 
-insertIntoOrderLines(obj).then(result=>{
-  console.log(result)
-})
+// insertIntoOrderLines(obj)
 
 // insertItemIntoCart("user1@gmail.com")
 // insertOrder("user1@gmail.com")
