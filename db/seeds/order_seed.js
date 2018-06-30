@@ -75,12 +75,6 @@ exports.seed = function(knex, Promise) {
           first_name: "Adib",
           last_name: "Al-Amir",
           phone_number: "6476096899"
-        },
-        {
-          login_id: result[2].login_id,
-          first_name: "D'Arcy",
-          last_name: "Myronuk",
-          phone_number: "6476096899"
         }
       ]).asCallback();
     });
@@ -237,10 +231,6 @@ exports.seed = function(knex, Promise) {
         {
           customer_id: result[0].customer_id,
           order_date: "1500/06/28/2018"
-        },
-        {
-          customer_id: result[0].customer_id,
-          order_date: "1500/06/29/2018"
         },
         {
           customer_id: result[1].customer_id,
