@@ -7,17 +7,6 @@ const cookieSession = require('cookie-session');
 const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
 
-const pg = require("pg");
-// const settings = require('./db/settings')
-// const knex = require('knex')({
-//   client: 'pg',
-//   connection: {
-//     host : settings.hostname,
-//     user : settings.user,
-//     password : settings.password,
-//     database : settings.database
-//   }
-// });
 const queries = require("./db/queries/queries.js");
 
 const mockDB = {
@@ -142,21 +131,38 @@ app.get("/restaurants/:id", (req, res) => {
 
 //delete item from logged-in user cart
 app.post("/cart/items/:id/delete", (req, res) => {
-  console.log("deleting item from cart")
+  let id = req.body.item_id;
+  console.log("body", req.body);
+  console.log("session cart", req.session.cart)
+  console.log("id:", id)
+
+  if(req.session.cart && req.session.cart[id]){
+    delete req.session.cart[id];
+    res.json({status:"success"})
+  }else{
+    res.json({status:"failed"})
+  }
 });
 
 //add item to logged-in user cart
 app.post("/cart/items/:id", (req, res) => {
   let item_id_exists = true // once db hooked up, check that item exists in db
   let id = req.params.id;
-  let quantity = req.body.quantity;
+  let quantity = Number(req.body.quantity);
 
   if(item_id_exists){
-    mockDB.cart.push({
-      id:req.params.id,
-      quantity:req.body.quantity,
-      cost:5*req.body.quantity,
-    });
+    let sessionItem = req.session.cart[id];
+
+    //check to see if there are any of this item already in cart - if yes
+    if(sessionItem){
+      sessionItem.quantity = Number(sessionItem.quantity) + quantity;
+
+    }else{
+      sessionItem = req.body;
+      sessionItem.quantity = quantity;
+    }
+
+    req.session.cart[id] = sessionItem;
     res.json({inData:req.body})
   }else{
     res.json({status:"failed"})
@@ -169,41 +175,25 @@ app.get("/cart", (req, res) => {
 
   //if user is logged in
   if(req.session.email){
+    let cart = req.session.cart;
 
-    queries.showCartItemsFromEmail(req.session.email).then(result => {
+    let subTotal = Object.keys(cart).reduce((acc, cur) => {
+      let curObj = cart[cur];
+      acc += curObj.price * curObj.quantity / 100;
+      return acc
+    },0);
 
-      let subTotal = result.reduce((acc, cur) => {
-        acc += cur.price;
-        return acc
-      },0);
+    //price in db is in cents so we need to convert to dollars
+    let tax = subTotal * 0.13;
+    let total = subTotal + tax;
 
-      //price in db is in cents so we need to convert to dollars
-      subTotal = subTotal / 100;
-      let tax = subTotal * 0.13;
-      let total = subTotal + tax;
+    res.json({
+      cart: cart,
+      subTotal: subTotal.toFixed(2),
+      tax: tax.toFixed(2),
+      total: total.toFixed(2)
+    });
 
-      //db query returns each individual item separately so we need to group by item name
-      let groupedItemsObj = result.reduce((acc, cur) => {
-        let key = cur.name;
-
-        //key already exists so we need to increment quantity and add another unit cost
-        if(acc[key]){
-          acc[key].quantity += 1;
-          acc[key].price += cur.price;
-        }else{
-          acc[key] = cur;
-          acc[key].quantity = 1;
-        }
-        return acc;
-      }, {})
-
-      res.json({
-        groupedItemsObj,
-        subTotal: subTotal.toFixed(2),
-        tax: tax.toFixed(2),
-        total: total.toFixed(2)
-      });
-    })
   //else forbidden, user is not logged in
   }else{
     res.status(403);
@@ -264,21 +254,21 @@ app.post("/login", (req,res) => {
     req.session.login_field_errs = login_field_errs;
     res.redirect("/login");
   }else{
-    //if username doesn't exist in db -- need function here
-    if(false){
-      req.session.login_validation_err = "Login Does Not Exist";
-      res.redirect("/login");
 
-    //usename exists so now check if passwords match
-    }else{
+    queries.getPass(req.body.email).then(result => {
+       //if pw hash doesnt exist in db -- user doesn't exist
+      if(result.length === 0){
+        req.session.login_validation_err = "Login Does Not Exist";
+        res.redirect("/login");
 
-      queries.getPass(req.body.email).then(result => {
+      //usename exists so now check if passwords match
+      }else{
         let dbHash = result[0].password;
 
         //if password matches hash
-        //real check -------------->>>>>> if(bcrypt.compareSync(req.body.password, dbHash))
-        if(req.body.password ==="z"){
+        if(bcrypt.compareSync(req.body.password, dbHash)){
           req.session.email = email;
+          req.session.cart = {};
           res.redirect("/");
 
         //incorrect password
@@ -286,10 +276,11 @@ app.post("/login", (req,res) => {
           req.session.login_validation_err = "Incorrect Email Or Password";
           res.redirect("/login");
         }
-      });
-    }
+      }
+    })
   }
 })
+
 
 app.get("/signup", (req, res) => {
   //check if previous signup attempt set any session cookie errors ie failed validation
@@ -339,6 +330,7 @@ app.post("/signup", (req, res) => {
           phone_number: req.body.phone_number,
         });
 
+        req.session.cart = {};
         req.session.email = req.body.email;
         req.session.first_name = req.body.first_name;
         res.redirect("/");
