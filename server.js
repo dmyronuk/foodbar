@@ -88,6 +88,7 @@ let prettyFormatFormField = (field_val) => {
   return outStr.trim();
 }
 
+//index page
 app.get("/", (req, res) => {
   let login_field_errs;
   if(req.session.login_field_errs){
@@ -189,16 +190,16 @@ app.post("/cart", (req, res) => {
 
 })
 
+//Ajax request handler - get all the menu items for a given menu_id
 app.get("/menus/:menu_id", (req, res) => {
-  console.log("menu_id", req.params.menu_id)
   let outData = mockDB.items[0];
   // console.log("menu_id: ", menu_id);
   queries.selectItemsFromMenu(req.params.menu_id).then(result=>{
+    console.log(result)
     res.json({
       mains:result.mains,
       appetizers:result.appetizers,
       beverages:result.beverages,
-      deserts:result.deserts,
     });
   })
 })

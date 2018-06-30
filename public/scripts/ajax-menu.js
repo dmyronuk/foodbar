@@ -15,11 +15,11 @@ function addMenuItemHandler(event){
 }
 
 function createMenuItem(dataRow){
-  console.log(dataRow)
+  var formattedPrice = (dataRow.price / 100).toFixed(2);
   var $item = $(`
     <div class="menu-item">
       <div>
-        <img src=${dataRow.imageURL}>
+        <img src=${dataRow.url}>
       </div>
       <div class="item-description-container">
         <h4>
@@ -30,9 +30,9 @@ function createMenuItem(dataRow){
         </div>
         <div>
           <div>
-            ${(dataRow.price / 100).toFixed(2)}
+            ${formattedPrice}
           <div>
-            <form id="${dataRow.id}">
+            <form id="${dataRow.item_id}">
               <input name="quantity" type="text" value=1>
               <input type="submit" value="Add" class="add-to-cart">
             </form>
@@ -55,16 +55,6 @@ function createCategoryHeading(category){
   `
 };
 
-function populateCategory(data, category){
-  var categoryArr = data[category];
-  var $categoryHeading = createCategoryHeading(category);
-  $(".menu-item-container").append($categoryHeading);
-
-  categoryArr.forEach(elem => {
-    var $curItem = createMenuItem(elem);
-    $(".menu-item-container").append($curItem);
-  })
-}
 
 $(document).ready(function(){
   $(".menu_img").on("click", function(event){
@@ -73,12 +63,18 @@ $(document).ready(function(){
     console.log("menu_id", menu_id)
 
     $.get(`/menus/${menu_id}`, function(data){
-        var $container = $(".menu-item-container");
-        $container.empty();
-        populateCategory(data, "appetizers");
-        // populateCategory(data, "mains");
-        populateCategory(data, "beverages");
+      var $container = $(".menu-item-container");
+      $container.empty();
+      for(category of ["appetizers", "beverages"]){
+        var $heading = createCategoryHeading(category);
+        $container.append($heading);
+
+        curMenuArr = data[category];
+        curMenuArr.forEach(elem => {
+          let $curItem = createMenuItem(elem)
+          $container.append($curItem);
+        })
       }
-    )
+    })
   })
 });

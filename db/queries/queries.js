@@ -24,7 +24,7 @@ module.exports = {
   selectEmailFromCustomer,
 
   selectAllInfoFromRestaurants,
-  
+
   showCartItems
 }
 
@@ -88,15 +88,16 @@ function showCartItems(orderId) {
 
 
 //Given user email, create a new active cart
-function createActiveCart(email) {
-  return knex("logins")
-    .join("customers", "logins.login_id", "customers.login_id")
-    .join("orders", "customers.customer_id", "order.customer_id")
-    .join("orderLines", "orders.order_id", "orderLines.order_id")
-    .insert({
-      order_date:
-    })
-}
+// function createActiveCart(email) {
+//   return knex("logins")
+//     .join("customers", "logins.login_id", "customers.login_id")
+//     .join("orders", "customers.customer_id", "order.customer_id")
+//     .join("orderLines", "orders.order_id", "orderLines.order_id")
+//     .insert({
+//       order_date:
+//     })
+
+// }
 
 
 
