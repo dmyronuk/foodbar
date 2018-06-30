@@ -18,7 +18,7 @@ module.exports = {
   selectMenusFromRestaurants,
 // function selectItemsFromMenu(menuId)
   selectItemsFromMenu,
-// function getPass(email) 
+// function getPass(email)
   getPass,
 // function selectCustomerFromEmail(email)
   selectCustomerFromEmail,
@@ -191,7 +191,7 @@ function selectOrderLines(){
   /*
     1. create order
     2. pull orderLines table containing all information, including the newly created order
-    3. insert item into orderLines from item_id.... use another async function??? 
+    3. insert item into orderLines from item_id.... use another async function???
 
   */
   return knex("orderLines")
@@ -208,7 +208,7 @@ function selectOrderLines(){
 
 
 
-  
+
 
   // const newOrder = await insertOrder(email)
     // .where("orderLines.order_id", orderId)
@@ -237,7 +237,7 @@ function insertOrder(email){
       .insert({
         customer_id: result[0].customer_id
       })
-    })  
+    })
 }
 
 
@@ -250,8 +250,4 @@ async function combine(email){
 // insertItemIntoCart("user1@gmail.com")
 // insertOrder("user1@gmail.com")
 // .then(selectOrderLines)
-showCartItemsFromEmail("user1@gmail.com")
-.then(result =>{
-  console.log(result)
-})
 // queryOrder("user1@gmail.com")
