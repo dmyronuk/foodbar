@@ -210,10 +210,11 @@ app.post("/cart", (req, res) => {
     return acc
   }, [])
 
-  // let arr = Object.keys(cart).map(function (key){
-  //   return queries.insertIntoOrderLines(cart[key]);
-  // });
+  let allPromises = arr.map(function (key){
+    return queries.insertIntoOrderLines(cart[key]);
+  });
   console.log(arr);
+  console.log(allPromises);
 
 })
 
