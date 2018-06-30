@@ -57,7 +57,6 @@ function createCategoryHeading(category){
   `
 };
 
-
 $(document).ready(function(){
   $(".menu_img").on("click", function(event){
     var $target = $(event.target);
@@ -76,7 +75,6 @@ $(document).ready(function(){
           let $curItem = createMenuItem(elem)
           $container.append($curItem);
         })
-
       }
     })
   })
