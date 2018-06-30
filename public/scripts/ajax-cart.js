@@ -7,8 +7,9 @@ function cartSubmitHandler(){
 };
 
 function createDOMCart(data){
-  var groupedItemsObj = data.groupedItemsObj;
-  var groupedItemsKeys = Object.keys(groupedItemsObj);
+  var cart = data.cart;
+  var cartKeys = Object.keys(cart);
+  console.log(data.cart);
 
   var $cart = $(`
     <div class="cart-container">
@@ -29,7 +30,7 @@ function createDOMCart(data){
   `);
 
   //if cart is not empty, populate table
-  if(groupedItemsKeys.length > 0){
+  if(cartKeys.length > 0){
     var $table=$(`
       <table>
         <tr>
@@ -40,15 +41,15 @@ function createDOMCart(data){
         </tr>
       </table>
       `);
-    groupedItemsKeys.forEach((key, i) => {
-      var curObj = groupedItemsObj[key];
+    cartKeys.forEach((key, i) => {
+      var curObj = cart[key];
       var $curRow = $(`
         <tr>
           <td>
             <button class="cart-remove-button">remove</button>
           </td>
-          <td>${key}</td>
-          <td>${curObj.quantity}</td>
+          <td>${curObj.item_name}</td>
+          <td class="center-align-td">${curObj.quantity}</td>
           <td class="right-align-td">&#36;${(curObj.price / 100).toFixed(2)}</td>
         </tr>
       `);

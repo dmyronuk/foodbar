@@ -155,17 +155,12 @@ app.post("/cart/items/:id", (req, res) => {
 
     //check to see if there are any of this item already in cart - if yes
     if(req.session.cart[id]){
-      req.session.cart[item_id].quantity += 1;
+      req.session.cart[id].quantity += 1;
 
     }else{
-      req.session.cart[item_id] = req.body;
+      req.session.cart[id] = req.body;
     }
 
-    req.session.push({
-      id:req.params.id,
-      quantity:req.body.quantity,
-      cost:5*req.body.quantity,
-    });
     res.json({inData:req.body})
   }else{
     res.json({status:"failed"})
@@ -178,41 +173,25 @@ app.get("/cart", (req, res) => {
 
   //if user is logged in
   if(req.session.email){
+    let cart = req.session.cart;
 
-    queries.showCartItemsFromEmail(req.session.email).then(result => {
+    let subTotal = Object.keys(cart).reduce((acc, cur) => {
+      let curObj = cart[cur];
+      acc += curObj.price / 100;
+      return acc
+    },0);
 
-      let subTotal = result.reduce((acc, cur) => {
-        acc += cur.price;
-        return acc
-      },0);
+    //price in db is in cents so we need to convert to dollars
+    let tax = subTotal * 0.13;
+    let total = subTotal + tax;
 
-      //price in db is in cents so we need to convert to dollars
-      subTotal = subTotal / 100;
-      let tax = subTotal * 0.13;
-      let total = subTotal + tax;
+    res.json({
+      cart: cart,
+      subTotal: subTotal.toFixed(2),
+      tax: tax.toFixed(2),
+      total: total.toFixed(2)
+    });
 
-      //db query returns each individual item separately so we need to group by item name
-      let groupedItemsObj = result.reduce((acc, cur) => {
-        let key = cur.name;
-
-        //key already exists so we need to increment quantity and add another unit cost
-        if(acc[key]){
-          acc[key].quantity += 1;
-          acc[key].price += cur.price;
-        }else{
-          acc[key] = cur;
-          acc[key].quantity = 1;
-        }
-        return acc;
-      }, {})
-
-      res.json({
-        groupedItemsObj,
-        subTotal: subTotal.toFixed(2),
-        tax: tax.toFixed(2),
-        total: total.toFixed(2)
-      });
-    })
   //else forbidden, user is not logged in
   }else{
     res.status(403);

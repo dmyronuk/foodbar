@@ -29,7 +29,7 @@
   table{
     margin-top:2em;
     border-collapse:collapse;
-    text-align:center;
+    text-align:left;
 
     .cart-remove-button{
       background:none;
@@ -48,6 +48,10 @@
 
     .spacer-row{
       height:1.5em;
+    }
+
+    .center-align-td{
+      text-align:center;
     }
 
     .right-align-td{
