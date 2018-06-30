@@ -29,16 +29,17 @@
   table{
     margin-top:2em;
     border-collapse:collapse;
-    text-align:center;
+    text-align:left;
 
     .cart-remove-button{
       background:none;
       color:blue;
       transition:color 1s;
+      background:#cccccc;
 
       &:hover{
+        background:#bbbbbb;
         color:#4d4dff;
-        background:none;
       }
     }
 
@@ -48,6 +49,10 @@
 
     .spacer-row{
       height:1.5em;
+    }
+
+    .center-align-td{
+      text-align:center;
     }
 
     .right-align-td{

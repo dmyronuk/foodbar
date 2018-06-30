@@ -6,10 +6,29 @@ function cartSubmitHandler(){
 
 };
 
-function createDOMCart(data){
-  var groupedItemsObj = data.groupedItemsObj;
-  var groupedItemsKeys = Object.keys(groupedItemsObj);
+function removeCartItemHandler(event){
+  event.preventDefault();
+  let $target = $(event.target);
+  var id = $target.attr("id");
+  console.log($target.parent().serialize())
 
+
+  $.ajax({
+    type: "POST",
+    data: $target.parent().serialize(),
+    url: `/cart/items/${id}/delete`,
+    success: function(data){
+      console.log("data sent back from server: ", data);
+    }
+  })
+}
+
+function createDOMCart(data){
+  var cart = data.cart;
+  var cartKeys = Object.keys(cart);
+  console.log(data.cart);
+
+  //the tables for the checkout line items go in <section>
   var $cart = $(`
     <div class="cart-container">
       <header>
@@ -29,7 +48,7 @@ function createDOMCart(data){
   `);
 
   //if cart is not empty, populate table
-  if(groupedItemsKeys.length > 0){
+  if(cartKeys.length > 0){
     var $table=$(`
       <table>
         <tr>
@@ -40,16 +59,19 @@ function createDOMCart(data){
         </tr>
       </table>
       `);
-    groupedItemsKeys.forEach((key, i) => {
-      var curObj = groupedItemsObj[key];
+    cartKeys.forEach((key, i) => {
+      var curObj = cart[key];
       var $curRow = $(`
         <tr>
           <td>
-            <button class="cart-remove-button">remove</button>
+            <form id="${key}">
+              <input name="item_id" type="hidden" value="${key}">
+              <input type="submit" value="remove" class="cart-remove-button">
+            </form>
           </td>
-          <td>${key}</td>
-          <td>${curObj.quantity}</td>
-          <td class="right-align-td">&#36;${(curObj.price / 100).toFixed(2)}</td>
+          <td>${curObj.item_name}</td>
+          <td class="center-align-td">${curObj.quantity}</td>
+          <td class="right-align-td">&#36;${(curObj.price * curObj.quantity / 100).toFixed(2)}</td>
         </tr>
       `);
       if(i % 2 === 0) $curRow.addClass("colored-row");
@@ -85,6 +107,7 @@ function createDOMCart(data){
 
   var $mask = $(`<div class="page-mask"></div>`);
   var $body = $("body");
+  $cart.find(".cart-remove-button").on("click", removeCartItemHandler);
   $body.prepend($mask);
   $body.prepend($cart);
 };
