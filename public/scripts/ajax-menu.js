@@ -33,6 +33,8 @@ function createMenuItem(dataRow){
             ${formattedPrice}
           <div>
             <form id="${dataRow.item_id}">
+              <input name="item_name" type="hidden" value="${dataRow.item_name}">
+              <input name="price" type="hidden" value=${dataRow.price}>
               <input name="quantity" type="text" value=1>
               <input type="submit" value="Add" class="add-to-cart">
             </form>

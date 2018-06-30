@@ -152,7 +152,16 @@ app.post("/cart/items/:id", (req, res) => {
   let quantity = req.body.quantity;
 
   if(item_id_exists){
-    mockDB.cart.push({
+
+    //check to see if there are any of this item already in cart - if yes
+    if(req.session.cart[id]){
+      req.session.cart[item_id].quantity += 1;
+
+    }else{
+      req.session.cart[item_id] = req.body;
+    }
+
+    req.session.push({
       id:req.params.id,
       quantity:req.body.quantity,
       cost:5*req.body.quantity,
@@ -264,21 +273,21 @@ app.post("/login", (req,res) => {
     req.session.login_field_errs = login_field_errs;
     res.redirect("/login");
   }else{
-    //if username doesn't exist in db -- need function here
-    if(false){
-      req.session.login_validation_err = "Login Does Not Exist";
-      res.redirect("/login");
 
-    //usename exists so now check if passwords match
-    }else{
+    queries.getPass(req.body.email).then(result => {
+       //if pw hash doesnt exist in db -- user doesn't exist
+      if(result.length === 0){
+        req.session.login_validation_err = "Login Does Not Exist";
+        res.redirect("/login");
 
-      queries.getPass(req.body.email).then(result => {
+      //usename exists so now check if passwords match
+      }else{
         let dbHash = result[0].password;
 
         //if password matches hash
-        //real check -------------->>>>>> if(bcrypt.compareSync(req.body.password, dbHash))
-        if(req.body.password ==="z"){
+        if(bcrypt.compareSync(req.body.password, dbHash)){
           req.session.email = email;
+          req.session.cart = {};
           res.redirect("/");
 
         //incorrect password
@@ -286,10 +295,11 @@ app.post("/login", (req,res) => {
           req.session.login_validation_err = "Incorrect Email Or Password";
           res.redirect("/login");
         }
-      });
-    }
+      }
+    })
   }
 })
+
 
 app.get("/signup", (req, res) => {
   //check if previous signup attempt set any session cookie errors ie failed validation
@@ -339,6 +349,7 @@ app.post("/signup", (req, res) => {
           phone_number: req.body.phone_number,
         });
 
+        req.session.cart = {};
         req.session.email = req.body.email;
         req.session.first_name = req.body.first_name;
         res.redirect("/");
