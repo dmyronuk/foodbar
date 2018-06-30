@@ -1,5 +1,3 @@
-console.log("hey there")
-
 function cartCancelHandler(){
 
 };
@@ -9,9 +7,8 @@ function cartSubmitHandler(){
 };
 
 function createDOMCart(data){
-  var subTotal = data.total;
-  var tax = subTotal * 0.13;
-  var total = subTotal + tax;
+  var groupedItemsObj = data.groupedItemsObj;
+  var groupedItemsKeys = Object.keys(groupedItemsObj);
 
   var $cart = $(`
     <div class="cart-container">
@@ -24,7 +21,7 @@ function createDOMCart(data){
       </section>
       <footer>
         <div>
-          Total: &#36;${total}
+          Total: &#36;${data.total}
         </div>
         <button id="confirm-order">Confirm Order</button>
       </footer>
@@ -32,7 +29,7 @@ function createDOMCart(data){
   `);
 
   //if cart is not empty, populate table
-  if(data.items.length > 0){
+  if(groupedItemsKeys.length > 0){
     var $table=$(`
       <table>
         <tr>
@@ -43,15 +40,16 @@ function createDOMCart(data){
         </tr>
       </table>
       `);
-    data.items.forEach((elem, i) => {
+    groupedItemsKeys.forEach((key, i) => {
+      var curObj = groupedItemsObj[key];
       var $curRow = $(`
         <tr>
           <td>
             <button class="cart-remove-button">remove</button>
           </td>
-          <td>Item Name</td>
-          <td>${elem.quantity}</td>
-          <td class="right-align-td">&#36;${elem.cost}</td>
+          <td>${key}</td>
+          <td>${curObj.quantity}</td>
+          <td class="right-align-td">&#36;${(curObj.price / 100).toFixed(2)}</td>
         </tr>
       `);
       if(i % 2 === 0) $curRow.addClass("colored-row");
@@ -65,17 +63,17 @@ function createDOMCart(data){
       <tr>
           <td colspan=2></td>
           <td right-align-td>Subtotal: </td>
-          <td class="right-align-td">&#36;${subTotal}</td>
+          <td class="right-align-td">&#36;${data.subTotal}</td>
       </tr>
       <tr>
           <td colspan=2></td>
           <td class="right-align-td">Tax: </td>
-          <td class="right-align-td">&#36;${tax}</td>
+          <td class="right-align-td">&#36;${data.tax}</td>
       </tr>
       <tr>
           <td colspan=2></td>
           <td class="right-align-td">Total: </td>
-          <td class="right-align-td">&#36;${total}</td>
+          <td class="right-align-td">&#36;${data.total}</td>
       </tr>
     `)
     $cart.find("section").append($table);
@@ -101,7 +99,6 @@ function cartClickHandler(event){
     type: "GET",
     url: "/cart",
     success: function(data){
-      console.log(data);
       createDOMCart(data);
       $(".page-mask").on("click", destroyDOMCart);
     }

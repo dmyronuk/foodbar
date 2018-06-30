@@ -116,90 +116,111 @@ exports.seed = function(knex, Promise) {
 
   function insertItems(){
     return knex("categories").select().then(result => {
-      knex("items").insert([
+      knex("items").insert([//0=appet, 1=mains, 2=bev
         {
-          category_id: result[0].category_id,
-          name: "Spicy Nachos",
-          price: 1099,
-          description: "Our signature nachos, but extra HOT!",
-          url: "",
-          prep_time: 10
-        },      
-        {
-          category_id: result[0].category_id,
+          category_id: result[0].category_id,//0
           name: "Nachos",
           price: 1099,
-          description: "Our signature four cheese nachos.",
-          url: "",
+          description: "Our signature four cheese nachos with your choice of regular or HOT.",
+          url: "../../public/images/nachos.jpg",
           prep_time: 10
         },
         {
-          category_id: result[0].category_id,
+          category_id: result[0].category_id,//1
           name: "Sweet Potato Fries",
-          price: 899,
+          price: 1199,
           description: "Crispy PEI sweet potato fires.",
-          url: "",
+          url: "../../public/images/sweet-potato.jpg",
           prep_time: 5
         },
         {
-          category_id: result[1].category_id,
+          category_id: result[1].category_id,//2
           name: "Philly Cheesesteak",
-          price: 1399,
-          description: "Sirloin steak sandwich with our signature cheese mix.",
-          url: "",
-          prep_time: 10
-        },
-
-        {
-          category_id: result[1].category_id,
-          name: "Spicy Philly Cheesesteak",
-          price: 1399,
-          description: "Sirloin steak sandwich with our signature cheese mix.",
-          url: "",
+          price: 1499,
+          description: "Sirloin steak sandwich with our signature cheese mix. With your choice of regular or HOT.",
+          url: "../../public/images/philly-cheese.jpg",
           prep_time: 10
         },
         {
-          category_id: result[1].category_id,
+          category_id: result[1].category_id,//3
           name: "Kobe Ribeye Steak",
           price: 9999,
           description: "12 oz Kobe beef ribeye steak. Served with fries.",
-          url: "",
+          url: "../../public/images/kobe-ribeye-steak.jpg",
           prep_time: 15
         },
         {
-          category_id: result[1].category_id,
+          category_id: result[1].category_id,//4
           name: "Grilled Salmon",
           price: 2999,
-          description: "Atlantic salmon, pan fried, with maple glaze. Served with fries.",
-          url: "",
+          description: "Atlantic salmon, grilled, with maple glaze. Served with fries.",
+          url: "../../public/images/grilled-atlantic-salmon.jpg",
           prep_time: 15
         },
         {
-          category_id: result[2].category_id,
+          category_id: result[2].category_id,//5
           name: "Pepsi",
-          price: 399,
+          price: 199,
           description: "Pepsi",
-          url: "",
+          url: "../../public/images/pepsi.jpg",
           prep_time: 1
         },
-
         {
-          category_id: result[2].category_id,
+          category_id: result[2].category_id,//6
           name: "Diet Pepsi",
-          price: 399,
+          price: 199,
           description: "Diet Pepsi",
-          url: "",
+          url: "../../public/images/diet-pepsi.jpg",
           prep_time: 1
         },
-
         {
-          category_id: result[2].category_id,
+          category_id: result[2].category_id,//7
           name: "Canada Dry",
-          price: 399,
+          price: 199,
           description: "Canada Dry ginger ale",
-          url: "",
+          url: "../../public/images/canada-dry.jpg",
           prep_time: 1
         },
+        {
+          category_id: result[1].category_id,//8
+          name: "Speghetti Donuts",
+          price: 899,
+          description: "Homemade spaghetti noodles with our freshly made doughnut batter.",
+          url: "../../public/images/spaghetti-donuts.jpg",
+          prep_time: 5
+        },
+        {
+          category_id: result[1].category_id,//9
+          name: "Hot Fried Chicken",
+          price: 1899,
+          description: "Juicy Korean-style fried chicken with a side of garlic sauce.",
+          url: "../../public/images/Hot-Fried-Chicken.jpg",
+          prep_time: 15
+        },
+        {
+          category_id: result[0].category_id,//10
+          name: "Kale Salad",
+          price: 699,
+          description: "Blue cheese kale salad with pecans and pomegranate, tossed with fresh lemon juice and extra-virgin olive oil.",
+          url: "../../public/images/kale-salad.jpg",
+          prep_time: 10
+        },
+        {
+          category_id: result[1].category_id,//11
+          name: "Roasted Red Pepper Chorizo Mac and Cheese",
+          price: 799,
+          description: "Classic homestyle comfort food made with nutty gruyère cheese.",
+          url: "../../public/images/mac-and-cheese.jpeg",
+          prep_time: 15
+        },
+        {
+          category_id: result[0].category_id,//12
+          name: "Avocado Bagel",
+          price: 299,
+          description: "Made with seasoned eggs and fresh avocado.",
+          url: "../../public/images/bagel-avocado.jpeg",
+          prep_time: 15
+        }
       ]).asCallback();
     });
   }
@@ -212,10 +233,6 @@ exports.seed = function(knex, Promise) {
           order_date: "1500/06/28/2018"
         },
         {
-          customer_id: result[0].customer_id,
-          order_date: "1500/06/29/2018"
-        },
-        {
           customer_id: result[1].customer_id,
           order_date: "1500/06/30/2018"
         }
@@ -226,54 +243,114 @@ exports.seed = function(knex, Promise) {
   async function insertMenuItems(){
   	const items = await knex("items").select()
   	const menus = await knex("menus").select()
-    return knex("menu_items").insert([
+    return knex("menu_items").insert([//LUNCH MENU STARTS HERE
       {
-        menu_id: menus[0].menu_id,
+        menu_id: menus[0].menu_id,//nachos
         menu_name: menus[0].name,
         item_id: items[0].item_id,
         item_name: items[0].name
       },
       {
-        menu_id: menus[1].menu_id,
-        menu_name: menus[1].name,
-        item_id: items[0].item_id,
-        item_name: items[0].name
+        menu_id: menus[0].menu_id,//SP fries
+        menu_name: menus[0].name,
+        item_id: items[1].item_id,
+        item_name: items[1].name
       },
       {
-        menu_id: menus[0].menu_id,
+        menu_id: menus[0].menu_id,//philly cheese
+        menu_name: menus[0].name,
+        item_id: items[2].item_id,
+        item_name: items[2].name
+      },
+      {
+        menu_id: menus[0].menu_id,//pepsi
+        menu_name: menus[0].name,
+        item_id: items[5].item_id,
+        item_name: items[5].name
+      },
+      {
+        menu_id: menus[0].menu_id,//diet pepsi
+        menu_name: menus[0].name,
+        item_id: items[6].item_id,
+        item_name: items[6].name
+      },
+      {
+        menu_id: menus[0].menu_id,//gingerale
         menu_name: menus[0].name,
         item_id: items[7].item_id,
         item_name: items[7].name
       },
       {
-        menu_id: menus[0].menu_id,
+        menu_id: menus[0].menu_id,//spagh donuts
         menu_name: menus[0].name,
         item_id: items[8].item_id,
         item_name: items[8].name
       },
       {
-        menu_id: menus[0].menu_id,
+        menu_id: menus[0].menu_id,//kale salad
         menu_name: menus[0].name,
-        item_id: items[9].item_id,
-        item_name: items[9].name
+        item_id: items[10].item_id,
+        item_name: items[10].name
       },
       {
-        menu_id: menus[1].menu_id,
+        menu_id: menus[0].menu_id,//mac-and-cheese
+        menu_name: menus[0].name,
+        item_id: items[11].item_id,
+        item_name: items[11].name
+      },
+      {
+        menu_id: menus[0].menu_id,//bagel avocado
+        menu_name: menus[0].name,
+        item_id: items[12].item_id,
+        item_name: items[12].name
+      },
+      {
+        menu_id: menus[1].menu_id,//DINNER MENU STARTS HERE
+        menu_name: menus[1].name,//steak
+        item_id: items[3].item_id,
+        item_name: items[3].name
+      },
+      {
+        menu_id: menus[1].menu_id,//salmon
+        menu_name: menus[1].name,
+        item_id: items[4].item_id,
+        item_name: items[4].name
+      },
+      {
+        menu_id: menus[1].menu_id,//pepsi
+        menu_name: menus[1].name,
+        item_id: items[5].item_id,
+        item_name: items[5].name
+      },
+      {
+        menu_id: menus[1].menu_id,//diet pepsi
+        menu_name: menus[1].name,
+        item_id: items[6].item_id,
+        item_name: items[6].name
+      },
+      {
+        menu_id: menus[1].menu_id,//gingerale
         menu_name: menus[1].name,
         item_id: items[7].item_id,
         item_name: items[7].name
       },
       {
-        menu_id: menus[1].menu_id,
-        menu_name: menus[1].name,
-        item_id: items[8].item_id,
-        item_name: items[8].name
-      },
-      {
-        menu_id: menus[1].menu_id,
+        menu_id: menus[1].menu_id,//fried chicken
         menu_name: menus[1].name,
         item_id: items[9].item_id,
         item_name: items[9].name
+      },
+      {
+        menu_id: menus[1].menu_id,//kale salad
+        menu_name: menus[1].name,
+        item_id: items[10].item_id,
+        item_name: items[10].name
+      },
+      {
+        menu_id: menus[1].menu_id,//mac-and-cheese
+        menu_name: menus[1].name,
+        item_id: items[11].item_id,
+        item_name: items[11].name
       }
     ]).asCallback()
   }
@@ -295,19 +372,35 @@ exports.seed = function(knex, Promise) {
       },
       {
         order_id: orders[0].order_id,
-        menu_item_id: menuItems[3].menu_item_id,
-        quantity: 1,
+        menu_item_id: menuItems[5].menu_item_id,
+        quantity: 2,
         status: "In Progress",
-        total_price: 1 * menuItems[3].price,
-        total_prep_time: 1 * menuItems[3].prep_time
+        total_price: 2 * menuItems[5].price,
+        total_prep_time: 2 * menuItems[5].prep_time
       },
       {
-        order_id: orders[0].order_id,
-        menu_item_id: menuItems[5].menu_item_id,
+        order_id: orders[1].order_id,
+        menu_item_id: menuItems[1].menu_item_id,
         quantity: 1,
         status: "In Progress",
-        total_price: 1 * menuItems[5].price,
-        total_prep_time: 1 * menuItems[5].prep_time
+        total_price: 1 * menuItems[1].price,
+        total_prep_time: 1 * menuItems[1].prep_time
+      },
+      {
+        order_id: orders[1].order_id,
+        menu_item_id: menuItems[7].menu_item_id,
+        quantity: 1,
+        status: "In Progress",
+        total_price: 1 * menuItems[7].price,
+        total_prep_time: 1 * menuItems[7].prep_time
+      },
+      {
+        order_id: orders[1].order_id,
+        menu_item_id: menuItems[9].menu_item_id,
+        quantity: 1,
+        status: "In Progress",
+        total_price: 1 * menuItems[9].price,
+        total_prep_time: 1 * menuItems[9].prep_time
       }
     ]).asCallback()
 

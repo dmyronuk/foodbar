@@ -22,7 +22,7 @@
           <input class="auth-button" type="submit" value="Sign Up">
         </form>
 
-        <% if(signup_field_errs){ %>
+        <% if(signup_field_errs && signup_field_errs.length > 0){ %>
           <div class="auth-err-container">
             <h4>Please enter:</h4>
             <% for(err of signup_field_errs){ %>
