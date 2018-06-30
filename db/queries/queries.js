@@ -25,7 +25,9 @@ module.exports = {
 // function selectRestaurantsFromEmail(email)
   selectRestaurantsFromEmail,
 // function showCartItemsFromEmail(email)
-  showCartItemsFromEmail
+  showCartItemsFromEmail,
+  // function insertIntoOrderLines(obj)
+  insertIntoOrderLines
 }
 
 function insertIntoLogins(obj) {
@@ -87,7 +89,6 @@ function showCartItemsFromEmail(email) {
     .select("items.name", "items.description", "items.price", "items.url")
     .where("logins.email", email)
 }
-
 
 
 //Given user email, create a new active cart

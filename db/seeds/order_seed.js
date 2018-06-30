@@ -122,7 +122,7 @@ exports.seed = function(knex, Promise) {
           name: "Nachos",
           price: 1099,
           description: "Our signature four cheese nachos with your choice of regular or HOT.",
-          url: "../../public/images/nachos.jpg",
+          url: "/images/nachos.jpg",
           prep_time: 10
         },
         {
@@ -130,7 +130,7 @@ exports.seed = function(knex, Promise) {
           name: "Sweet Potato Fries",
           price: 1199,
           description: "Crispy PEI sweet potato fires.",
-          url: "../../public/images/sweet-potato.jpg",
+          url: "/images/sweet-potato.jpg",
           prep_time: 5
         },
         {
@@ -138,7 +138,7 @@ exports.seed = function(knex, Promise) {
           name: "Philly Cheesesteak",
           price: 1499,
           description: "Sirloin steak sandwich with our signature cheese mix. With your choice of regular or HOT.",
-          url: "../../public/images/philly-cheese.jpg",
+          url: "/images/philly-cheese.jpg",
           prep_time: 10
         },
         {
@@ -146,7 +146,7 @@ exports.seed = function(knex, Promise) {
           name: "Kobe Ribeye Steak",
           price: 9999,
           description: "12 oz Kobe beef ribeye steak. Served with fries.",
-          url: "../../public/images/kobe-ribeye-steak.jpg",
+          url: "/images/kobe-ribeye-steak.jpg",
           prep_time: 15
         },
         {
@@ -154,7 +154,7 @@ exports.seed = function(knex, Promise) {
           name: "Grilled Salmon",
           price: 2999,
           description: "Atlantic salmon, grilled, with maple glaze. Served with fries.",
-          url: "../../public/images/grilled-atlantic-salmon.jpg",
+          url: "/images/grilled-atlantic-salmon.jpg",
           prep_time: 15
         },
         {
@@ -162,7 +162,7 @@ exports.seed = function(knex, Promise) {
           name: "Pepsi",
           price: 199,
           description: "Pepsi",
-          url: "../../public/images/pepsi.jpg",
+          url: "/images/pepsi.jpg",
           prep_time: 1
         },
         {
@@ -170,7 +170,7 @@ exports.seed = function(knex, Promise) {
           name: "Diet Pepsi",
           price: 199,
           description: "Diet Pepsi",
-          url: "../../public/images/diet-pepsi.jpg",
+          url: "/images/diet-pepsi.jpg",
           prep_time: 1
         },
         {
@@ -178,7 +178,7 @@ exports.seed = function(knex, Promise) {
           name: "Canada Dry",
           price: 199,
           description: "Canada Dry ginger ale",
-          url: "../../public/images/canada-dry.jpg",
+          url: "/images/canada-dry.jpg",
           prep_time: 1
         },
         {
@@ -186,7 +186,7 @@ exports.seed = function(knex, Promise) {
           name: "Speghetti Donuts",
           price: 899,
           description: "Homemade spaghetti noodles with our freshly made doughnut batter.",
-          url: "../../public/images/spaghetti-donuts.jpg",
+          url: "/images/spaghetti-donuts.jpg",
           prep_time: 5
         },
         {
@@ -194,7 +194,7 @@ exports.seed = function(knex, Promise) {
           name: "Hot Fried Chicken",
           price: 1899,
           description: "Juicy Korean-style fried chicken with a side of garlic sauce.",
-          url: "../../public/images/Hot-Fried-Chicken.jpg",
+          url: "/images/Hot-Fried-Chicken.jpg",
           prep_time: 15
         },
         {
@@ -202,7 +202,7 @@ exports.seed = function(knex, Promise) {
           name: "Kale Salad",
           price: 699,
           description: "Blue cheese kale salad with pecans and pomegranate, tossed with fresh lemon juice and extra-virgin olive oil.",
-          url: "../../public/images/kale-salad.jpg",
+          url: "/images/kale-salad.jpg",
           prep_time: 10
         },
         {
@@ -210,7 +210,7 @@ exports.seed = function(knex, Promise) {
           name: "Roasted Red Pepper Chorizo Mac and Cheese",
           price: 799,
           description: "Classic homestyle comfort food made with nutty gruyère cheese.",
-          url: "../../public/images/mac-and-cheese.jpeg",
+          url: "/images/mac-and-cheese.jpeg",
           prep_time: 15
         },
         {
@@ -218,7 +218,7 @@ exports.seed = function(knex, Promise) {
           name: "Avocado Bagel",
           price: 299,
           description: "Made with seasoned eggs and fresh avocado.",
-          url: "../../public/images/bagel-avocado.jpeg",
+          url: "/images/bagel-avocado.jpeg",
           prep_time: 15
         }
       ]).asCallback();
