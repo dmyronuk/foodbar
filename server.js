@@ -142,8 +142,10 @@ app.get("/restaurants/:id", (req, res) => {
 
 //delete item from logged-in user cart
 app.post("/cart/items/:id/delete", (req, res) => {
-  let id = req.params.id;
-  console.log("id", id);
+  let id = req.body.item_id;
+  console.log("body", req.body);
+  console.log("session cart", req.session.cart)
+  console.log("id:", id)
 
   if(req.session.cart && req.session.cart[id]){
     delete req.session.cart[id];
@@ -172,7 +174,6 @@ app.post("/cart/items/:id", (req, res) => {
     }
 
     req.session.cart[id] = sessionItem;
-    console.log("new quantity: ", sessionItem.quantity)
     res.json({inData:req.body})
   }else{
     res.json({status:"failed"})
@@ -186,7 +187,6 @@ app.get("/cart", (req, res) => {
   //if user is logged in
   if(req.session.email){
     let cart = req.session.cart;
-    console.log(cart);
 
     let subTotal = Object.keys(cart).reduce((acc, cur) => {
       let curObj = cart[cur];

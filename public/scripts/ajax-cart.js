@@ -8,12 +8,14 @@ function cartSubmitHandler(){
 
 function removeCartItemHandler(event){
   event.preventDefault();
-  var $target = $(event.target);
+  let $target = $(event.target);
   var id = $target.attr("id");
+  console.log($target.parent().serialize())
+
 
   $.ajax({
     type: "POST",
-    data: $target.serialize(),
+    data: $target.parent().serialize(),
     url: `/cart/items/${id}/delete`,
     success: function(data){
       console.log("data sent back from server: ", data);
@@ -26,6 +28,7 @@ function createDOMCart(data){
   var cartKeys = Object.keys(cart);
   console.log(data.cart);
 
+  //the tables for the checkout line items go in <section>
   var $cart = $(`
     <div class="cart-container">
       <header>
@@ -68,7 +71,7 @@ function createDOMCart(data){
           </td>
           <td>${curObj.item_name}</td>
           <td class="center-align-td">${curObj.quantity}</td>
-          <td class="right-align-td">&#36;${(curObj.price / 100).toFixed(2)}</td>
+          <td class="right-align-td">&#36;${(curObj.price * curObj.quantity / 100).toFixed(2)}</td>
         </tr>
       `);
       if(i % 2 === 0) $curRow.addClass("colored-row");
