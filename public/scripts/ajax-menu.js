@@ -67,7 +67,7 @@ $(document).ready(function(){
     $.get(`/menus/${menu_id}`, function(data){
       var $container = $(".menu-item-container");
       $container.empty();
-      for(category of ["appetizers", "beverages"]){
+      for(category of ["appetizers", "mains", "beverages"]){
         var $heading = createCategoryHeading(category);
         $container.append($heading);
 

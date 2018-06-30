@@ -7,17 +7,6 @@ const cookieSession = require('cookie-session');
 const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
 
-const pg = require("pg");
-// const settings = require('./db/settings')
-// const knex = require('knex')({
-//   client: 'pg',
-//   connection: {
-//     host : settings.hostname,
-//     user : settings.user,
-//     password : settings.password,
-//     database : settings.database
-//   }
-// });
 const queries = require("./db/queries/queries.js");
 
 const mockDB = {

@@ -87,7 +87,6 @@ function showCartItemsFromEmail(email) {
     .select("items.name", "items.description", "items.price", "items.url")
     .where("logins.email", email)
 }
-showCartItems(1) /*for testing*/
 
 
 //Given user email, create a new active cart
