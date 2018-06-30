@@ -1,17 +1,19 @@
-function cartCancelHandler(){
 
-};
-
-function cartSubmitHandler(){
-
-};
+function confirmOrderHandler(event){
+  $.ajax({
+    type: "POST",
+    url:"/cart",
+    success: function(data){
+      console.log(data);
+    }
+  })
+}
 
 function removeCartItemHandler(event){
   event.preventDefault();
   let $target = $(event.target);
   var id = $target.attr("id");
   console.log($target.parent().serialize())
-
 
   $.ajax({
     type: "POST",
@@ -26,7 +28,6 @@ function removeCartItemHandler(event){
 function createDOMCart(data){
   var cart = data.cart;
   var cartKeys = Object.keys(cart);
-  console.log(data.cart);
 
   //the tables for the checkout line items go in <section>
   var $cart = $(`
@@ -104,10 +105,10 @@ function createDOMCart(data){
   }else{
 
   }
-
   var $mask = $(`<div class="page-mask"></div>`);
   var $body = $("body");
   $cart.find(".cart-remove-button").on("click", removeCartItemHandler);
+  $cart.find("#confirm-order").on("click", confirmOrderHandler);
   $body.prepend($mask);
   $body.prepend($cart);
 };
