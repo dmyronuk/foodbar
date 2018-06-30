@@ -250,8 +250,4 @@ async function combine(email){
 // insertItemIntoCart("user1@gmail.com")
 // insertOrder("user1@gmail.com")
 // .then(selectOrderLines)
-showCartItemsFromEmail("user1@gmail.com")
-.then(result =>{
-  console.log(result)
-})
 // queryOrder("user1@gmail.com")

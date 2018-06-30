@@ -169,16 +169,41 @@ app.get("/cart", (req, res) => {
 
   //if user is logged in
   if(req.session.email){
-    let items = mockDB.cart;
-    let total = items.reduce((acc, cur) => {
-      acc += cur.quantity * cur.cost;
-      return acc
-    },0);
-    res.json({
-      items: items,
-      total: total,
-    });
 
+    queries.showCartItemsFromEmail(req.session.email).then(result => {
+
+      let subTotal = result.reduce((acc, cur) => {
+        acc += cur.price;
+        return acc
+      },0);
+
+      //price in db is in cents so we need to convert to dollars
+      subTotal = subTotal / 100;
+      let tax = subTotal * 0.13;
+      let total = subTotal + tax;
+
+      //db query returns each individual item separately so we need to group by item name
+      let groupedItemsObj = result.reduce((acc, cur) => {
+        let key = cur.name;
+
+        //key already exists so we need to increment quantity and add another unit cost
+        if(acc[key]){
+          acc[key].quantity += 1;
+          acc[key].price += cur.price;
+        }else{
+          acc[key] = cur;
+          acc[key].quantity = 1;
+        }
+        return acc;
+      }, {})
+
+      res.json({
+        groupedItemsObj,
+        subTotal: subTotal.toFixed(2),
+        tax: tax.toFixed(2),
+        total: total.toFixed(2)
+      });
+    })
   //else forbidden, user is not logged in
   }else{
     res.status(403);
@@ -193,9 +218,8 @@ app.post("/cart", (req, res) => {
 //Ajax request handler - get all the menu items for a given menu_id
 app.get("/menus/:menu_id", (req, res) => {
   let outData = mockDB.items[0];
-  // console.log("menu_id: ", menu_id);
+
   queries.selectItemsFromMenu(req.params.menu_id).then(result=>{
-    console.log(result)
     res.json({
       mains:result.mains,
       appetizers:result.appetizers,
@@ -252,7 +276,8 @@ app.post("/login", (req,res) => {
         let dbHash = result[0].password;
 
         //if password matches hash
-        if(bcrypt.compareSync(req.body.password, dbHash)){
+        //real check -------------->>>>>> if(bcrypt.compareSync(req.body.password, dbHash))
+        if(req.body.password ==="z"){
           req.session.email = email;
           res.redirect("/");
 
@@ -297,19 +322,28 @@ app.post("/signup", (req, res) => {
   if(signup_field_errs.length > 0){
     res.redirect("/signup");
 
-  //success - push the new user into the database and redirect to home page
   }else{
-    queries.insertIntoCustomers({
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 10),
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      phone_number: req.body.phone_number,
-    });
+    //check to see if there's an existing user with this email
+    queries.selectCustomerFromEmail(req.body.email).then(result => {
 
-    req.session.email = req.body.email;
-    req.session.first_name = req.body.first_name;
-    res.redirect("/");
+      //if there is an existing user with the email, reject
+      if(result.length > 0){
+        res.redirect("/signup");
+      //success - push the new user into the database and redirect to home page
+      }else{
+        queries.insertIntoCustomers({
+          email: req.body.email,
+          password: bcrypt.hashSync(req.body.password, 10),
+          first_name: req.body.first_name,
+          last_name: req.body.last_name,
+          phone_number: req.body.phone_number,
+        });
+
+        req.session.email = req.body.email;
+        req.session.first_name = req.body.first_name;
+        res.redirect("/");
+      }
+    })
   }
 });
 

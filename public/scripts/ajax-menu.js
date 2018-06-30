@@ -74,6 +74,7 @@ $(document).ready(function(){
           let $curItem = createMenuItem(elem)
           $container.append($curItem);
         })
+
       }
     })
   })
