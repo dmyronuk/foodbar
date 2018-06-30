@@ -2,9 +2,15 @@ function cartCancelHandler(){
 
 };
 
-function cartSubmitHandler(){
-
-};
+function confirmOrderHandler(event){
+  $.ajax({
+    type: "POST",
+    url:"/cart",
+    success: function(data){
+      console.log(data);
+    }
+  })
+}
 
 function removeCartItemHandler(event){
   event.preventDefault();
@@ -104,10 +110,10 @@ function createDOMCart(data){
   }else{
 
   }
-
   var $mask = $(`<div class="page-mask"></div>`);
   var $body = $("body");
   $cart.find(".cart-remove-button").on("click", removeCartItemHandler);
+  $cart.find("#confirm-order").on("click", confirmOrderHandler);
   $body.prepend($mask);
   $body.prepend($cart);
 };
