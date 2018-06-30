@@ -68,13 +68,22 @@ app.post('/sms', (req, res) => {
 });
 
 //remove underscores and cap first letter
-let prettyFormatFormField = (field_val) => {
+const prettyFormatFormField = (field_val) => {
   let wordArr = field_val.split("_");
   let outStr = wordArr.reduce((acc, cur) => {
     acc = acc + cur[0].toUpperCase() + cur.slice(1) + " ";
     return acc;
   }, "")
   return outStr.trim();
+}
+
+//given the request.session.cart object, return the total $ amount of items
+const calculateCartTotal = function(cart){
+  return Object.keys(cart).reduce((acc, cur) => {
+    let curObj = cart[cur];
+    acc += curObj.price * curObj.quantity / 100;
+    return acc
+  },0);
 }
 
 //index page
@@ -176,14 +185,7 @@ app.get("/cart", (req, res) => {
   //if user is logged in
   if(req.session.email){
     let cart = req.session.cart;
-
-    let subTotal = Object.keys(cart).reduce((acc, cur) => {
-      let curObj = cart[cur];
-      acc += curObj.price * curObj.quantity / 100;
-      return acc
-    },0);
-
-    //price in db is in cents so we need to convert to dollars
+    let subTotal = calculateCartTotal(cart);
     let tax = subTotal * 0.13;
     let total = subTotal + tax;
 
@@ -202,7 +204,11 @@ app.get("/cart", (req, res) => {
 
 //confirm checkout -- twilio db stuff and twilio text goes in here
 app.post("/cart", (req, res) => {
+  let subTotal = calculateCartTotal(req.session.cart);
+  console.log("SubTotal ", subTotal);
 
+
+  res.json("Hey we did it guys")
 })
 
 //Ajax request handler - get all the menu items for a given menu_id
