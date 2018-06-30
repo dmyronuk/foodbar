@@ -351,7 +351,19 @@ exports.seed = function(knex, Promise) {
         menu_name: menus[1].name,
         item_id: items[11].item_id,
         item_name: items[11].name
-      }
+      },
+      {
+        menu_id: menus[1].menu_id,//nachos
+        menu_name: menus[1].name,
+        item_id: items[0].item_id,
+        item_name: items[0].name
+      },
+      {
+        menu_id: menus[1].menu_id,//SP fries
+        menu_name: menus[1].name,
+        item_id: items[1].item_id,
+        item_name: items[1].name
+      },
     ]).asCallback()
   }
 
