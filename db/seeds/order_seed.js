@@ -284,8 +284,6 @@ exports.seed = function(knex, Promise) {
       knex("menu_items")
       .join("items", "menu_items.item_id", "items.item_id")
       .select();
-    console.log(orders)
-    console.log(menuItems)
     return knex("orderLines").insert([
       {
         order_id: orders[0].order_id,
