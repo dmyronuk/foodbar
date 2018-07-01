@@ -63,10 +63,11 @@ const getTimeStr = (minutesOffset, offsetFromUTC) => {
   let readyTime = new Date(readyTimeMs);
   let hours = readyTime.getHours();
   let minutes = readyTime.getMinutes();
-  let suffix = "am"
-  if(hours > 12){
+  let suffix = (hours > 11) ? "pm" : "am";
+  if(hours === 0){
+    hours = 12;
+  }else if(hours > 12){
     hours -= 12;
-    suffix = "pm";
   }
   let outStr = `${hours}:${minutes}${suffix}`;
   return outStr;
