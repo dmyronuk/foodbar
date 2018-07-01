@@ -315,7 +315,7 @@ app.post("/cart", (req, res) => {
         restaurant_name: "Good Restaurant",
         total_cost: total_cost,
         // formatting the prepTime
-        ready_time: getTimeStr(prepTime, -4),
+        ready_time: getTimeStr(prepTime, 0),
         recipient_phone_number: `+1${info.phone_number.replace("-", "")}`,
       }, createClientSMS);
 
@@ -341,14 +341,6 @@ app.get("/menus/:menu_id", (req, res) => {
   })
 });
 
-
-// renders order page
-app.get("/orders/", (req, res) => {
-
-  res.render("orders", {
-    email:req.session.email,
-  })
-})
 
 app.get("/login", (req, res) => {
   //login_field_errs represent missing fields - login validation errors represent some kind of authentication failure
