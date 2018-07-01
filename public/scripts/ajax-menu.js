@@ -61,7 +61,6 @@ $(document).ready(function(){
   $(".menu_img").on("click", function(event){
     var $target = $(event.target);
     var menu_id = $target.attr("menu_id");
-    console.log("menu_id", menu_id)
 
     $.get(`/menus/${menu_id}`, function(data){
       var $container = $(".menu-item-container");
@@ -69,8 +68,11 @@ $(document).ready(function(){
       for(category of ["appetizers", "mains", "beverages"]){
         var $heading = createCategoryHeading(category);
         $container.append($heading);
+        console.log(data[category][0])
 
-        curMenuArr = data[category];
+        curMenuArr = data[category].sort((a, b) => {
+          return a.item_name > b.item_name;
+        });
         curMenuArr.forEach(elem => {
           let $curItem = createMenuItem(elem)
           $container.append($curItem);
