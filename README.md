@@ -7,6 +7,7 @@ Foodbar is a full stack application that lets you order food from a restaurant. 
 !["Screenshot of home page"](https://github.com/dmyronuk/foodbar/blob/working/docs/homepage.PNG?raw=true)
 !["Screenshot of lunch menu"](https://github.com/dmyronuk/foodbar/blob/working/docs/menu.PNG?raw=true)
 !["Screenshot of cart"](https://github.com/dmyronuk/foodbar/blob/working/docs/cart.PNG?raw=true)
+!["Screenshot of sample SMS"]()
 
 
 ## Dependencies
@@ -28,11 +29,11 @@ Foodbar is a full stack application that lets you order food from a restaurant. 
 3. Within postgres (type psql), run these commands
   - CREATE ROLE labber WITH LOGIN password 'labber';
   - CREATE DATABASE midterm OWNER labber;
-5. Change into "db" folder and run these commands:
+4. Change into "db" folder and run these commands:
   - knex migrate:latest
   - knex seed:run
-4. Start the web server using the `npm run local` command. The app will be served at <http://localhost:8080/>.
-5. Go to <http://localhost:8080/> in your browser.
+5. Start the web server using the `npm run local` command. The app will be served at <http://localhost:8080/>.
+6. Go to <http://localhost:8080/> in your browser.
 
 ## Notes
 
