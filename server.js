@@ -55,10 +55,10 @@ app.use(nodeSassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, "./public")));
 
-//prep time in minutes
-const getReadyTimeStr = (prepTime) => {
+//minutes offSet variable represents minutes in the future relative to time when function called
+const getTimeStr = (minutesOffset) => {
   let curDate = new Date();
-  let readyTimeMs = curDate.getTime() + 1000 * 60 * prepTime;
+  let readyTimeMs = curDate.getTime() + 1000 * 60 * minutesOffset;
   let readyTime = new Date(readyTimeMs);
 
   let hours = readyTime.getHours();
@@ -77,11 +77,23 @@ const getReadyTimeStr = (prepTime) => {
 }
 
 //data: first_name, restaurant_name, total_cost, ready_time
-const createSMSString = (data) => {
+const createClientSMS = (data) => {
   let lineA = `Hello ${data.first_name}! Your order from ${data.restaurant_name} `;
   let lineB = `will be ready at approximately ${data.ready_time}.`;
   let lineC = `\n\nTotal due: $${data.total_cost.toFixed(2)}`;
   return lineA + lineB + lineC;
+}
+
+const createRestaurantSMS = (data) => {
+  let outStr = "";
+  let curTime = getTimeStr(0);
+  outStr += `Order placed by ${data.first_name} ${data.last_name} at ${curTime}\n`
+
+  for(key in data.cart){
+    let curItem = data.cart[key];
+    outStr += `${curItem.quantity} x ${curItem.item_name}\n`;
+  }
+  return outStr;
 }
 
 //remove underscores and cap first letter
@@ -245,7 +257,7 @@ app.post("/cart", (req, res) => {
   let subTotal = calculateCartTotal(req.session.cart);
   let tax = subTotal * 0.13;
   let total_cost = subTotal + tax;
-  let ready_time = getReadyTimeStr(40);
+  let ready_time = getTimeStr(40);
 
   //order must contain items
   if(Object.keys(cart).length === 0){
@@ -264,17 +276,34 @@ app.post("/cart", (req, res) => {
     queries.selectCustomerFromEmail(req.session.email).then(result => {
       let info = result[0];
 
+      let restaurantMsg = createRestaurantSMS({
+        cart: req.session.cart,
+        first_name: info.first_name,
+        last_name: info.last_name,
+        total_cost: total_cost,
+        ready_time: ready_time
+      });
+
       //data: first_name, restaurant_name, total_cost, ready_time
-      let msg = createSMSString({
+      let clientMsg = createClientSMS({
         first_name: info.first_name,
         restaurant_name: "Good Restaurant",
         total_cost: total_cost,
         ready_time: ready_time
-      })
+      });
 
       twilioClient.messages
       .create({
-         body: msg,
+         body: restaurantMsg,
+         from: twilioNumber,
+         to: `+16475376750`
+      })
+      .then(message => console.log("Twilio SID:", message.sid))
+      .done();
+
+      twilioClient.messages
+      .create({
+         body: clientMsg,
          from: twilioNumber,
          to: `+1${info.phone_number.replace("-", "")}`
       })
