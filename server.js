@@ -282,12 +282,15 @@ app.post("/cart", (req, res) => {
       return queries.insertIntoOrderLines(key);
     });
 
-    queries.insertOrder(req.session.email).then(()=>{
-      Promise.all(allPromises)
-    });
+    // async function updateDBwithOrders()
+    async function asyncCall (){
+      const insertOrder = await queries.insertOrder(req.session.email);
+      const insertOrderLines = await Promise.all(allPromises);
+      const customers = await queries.selectCustomerFromEmail(req.session.email);
+      const prepTime = await queries.getTotalPrepTimeFromLatestOrder();
+      let info = customers[0];
 
-    queries.selectCustomerFromEmail(req.session.email).then(result => {
-      let info = result[0];
+      console.log(prepTime);
 
       sendSMS({
         cart: req.session.cart,
@@ -302,13 +305,44 @@ app.post("/cart", (req, res) => {
         first_name: info.first_name,
         restaurant_name: "Good Restaurant",
         total_cost: total_cost,
-        ready_time: ready_time,
+        ready_time: getTimeStr(prepTime, -4),
         recipient_phone_number: `+1${info.phone_number.replace("-", "")}`,
       }, createClientSMS);
 
       req.session.cart = {};
       res.json({success: true});
-    })
+
+      return
+
+    }
+    asyncCall()
+    // queries.insertOrder(req.session.email).then(()=>{
+    //   Promise.all(allPromises)
+    // });
+
+    // queries.selectCustomerFromEmail(req.session.email).then(result => {
+    //   let info = result[0];
+
+    //   sendSMS({
+    //     cart: req.session.cart,
+    //     first_name: info.first_name,
+    //     last_name: info.last_name,
+    //     total_cost: total_cost,
+    //     ready_time: ready_time,
+    //     recipient_phone_number: "+16475376750",
+    //   }, createRestaurantSMS);
+
+    //   sendSMS({
+    //     first_name: info.first_name,
+    //     restaurant_name: "Good Restaurant",
+    //     total_cost: total_cost,
+    //     ready_time: ready_time,
+    //     recipient_phone_number: `+1${info.phone_number.replace("-", "")}`,
+    //   }, createClientSMS);
+
+    //   req.session.cart = {};
+    //   res.json({success: true});
+    // })
   }
 });
 
