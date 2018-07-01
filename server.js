@@ -281,6 +281,7 @@ app.post("/cart", (req, res) => {
       .then(message => console.log("Twilio SID:", message.sid))
       .done();
 
+      req.session.cart = {};
       res.json({success: true});
     })
   }
