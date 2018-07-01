@@ -18,7 +18,7 @@ function createMenuItem(dataRow){
   var formattedPrice = (dataRow.price / 100).toFixed(2);
   var $item = $(`
     <div class="menu-item">
-      <div>
+      <div class="item-img-container">
         <img src=${dataRow.url}>
       </div>
       <div class="item-description-container">
