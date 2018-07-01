@@ -55,20 +55,7 @@ app.use(nodeSassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, "./public")));
 
-/*-----Twilio--------*/
-// app.post('/sms', (req, res) => {
-//   twilioClient.messages
-//   .create({
-//      body: `Hello ${knex.select('first_name').from('customer')}! The order for ${knex.select('orderLine_id').from('orderLine')} has been received at ${knex.select('order_date').from('order')}. Your total is ${knex.select('total_price').from('orderLine')} and your food will arrive in ${knex.select('total_prep_time').from('orderLine')}.`,
-//      from: twilioNumber,
-//      to: '+16475376750'
-//    })
-//   .then(message => console.log(message.sid))
-//   .done();
-//   res.redirect('/')
-// });
-
-//pret time in minutes
+//prep time in minutes
 const getReadyTimeStr = (prepTime) => {
   let curDate = new Date();
   let readyTimeMs = curDate.getTime() + 1000 * 60 * prepTime;
@@ -81,16 +68,18 @@ const getReadyTimeStr = (prepTime) => {
     hours -= 12;
     suffix = "pm";
   }
+  //time is wrong on our vagrant machines
+  hours -= 4;
   let outStr = `${hours}:${minutes}${suffix}`;
+  return outStr;
 }
 
 //data: first_name, restaurant_name, total_cost, ready_time
 const createSMSString = (data) => {
-  return `Hello ${data.first_name}!
-  Your order from ${data.restaurant_name} has been placed.
-  It will be ready at approximately ${data.ready_time}.
-  Total amount: ${data.total_cost}
-  `
+  let lineA = `Hello ${data.first_name}! Your order from ${data.restaurant_name} `;
+  let lineB = `will be ready in It will be ready at approximately ${data.ready_time}.`;
+  let lineC = `\n\nTotal due: $${data.total_cost.toFixed(2)}`;
+  return lineA + lineB + lineC;
 }
 
 //remove underscores and cap first letter
@@ -167,13 +156,19 @@ app.get("/restaurants/:id", (req, res) => {
 //delete item from logged-in user cart
 app.post("/cart/items/:id/delete", (req, res) => {
   let id = req.body.item_id;
-  console.log("body", req.body);
-  console.log("session cart", req.session.cart)
-  console.log("id:", id)
 
   if(req.session.cart && req.session.cart[id]){
     delete req.session.cart[id];
-    res.json({status:"success"})
+
+    let subTotal = calculateCartTotal(req.session.cart);
+    let tax = subTotal * 0.13;
+    let total = subTotal + tax;
+
+    res.json({
+      subTotal: subTotal.toFixed(2),
+      tax: tax.toFixed(2),
+      total: total.toFixed(2)
+    });
   }else{
     res.json({status:"failed"})
   }
@@ -236,33 +231,33 @@ app.post("/cart", (req, res) => {
   let total_cost = subTotal + tax;
   let ready_time = getReadyTimeStr(40);
 
-  console.log(ready_time);
-  console.log(total_cost);
+  //order must contain items
+  if(Object.keys(cart).length === 0){
+    res.json({success: false});
+  }else{
+    queries.selectCustomerFromEmail(req.session.email).then(result => {
+      let info = result[0];
 
-  queries.selectCustomerFromEmail(req.session.email).then(result => {
-    console.log(result);
-    let info = result[0];
-    console.log("info:   ", info);
+      //data: first_name, restaurant_name, total_cost, ready_time
+      let msg = createSMSString({
+        first_name: info.first_name,
+        restaurant_name: "Good Restaurant",
+        total_cost: total_cost,
+        ready_time: ready_time
+      })
 
-    //data: first_name, restaurant_name, total_cost, ready_time
-    let msg = createSMSString({
-      first_name: info.first_name,
-      restaurant_name: "Good Restaurant",
-      total_cost: total_cost,
-      ready_time: ready_time
+      twilioClient.messages
+      .create({
+         body: msg,
+         from: twilioNumber,
+         to: `+1${info.phone_number.replace("-", "")}`
+      })
+      .then(message => console.log("Twilio SID:", message.sid))
+      .done();
+
+      res.json({success: true});
     })
-
-    twilioClient.messages
-    .create({
-       body: msg,
-       from: twilioNumber,
-       to: `+1${info.phone_number.replace("-", "")}`
-    })
-    .then(message => console.log("Twilio SID:", message.sid))
-    .done();
-
-    res.json("Hey we did it guys");
-  })
+  }
 });
 
 //Ajax request handler - get all the menu items for a given menu_id

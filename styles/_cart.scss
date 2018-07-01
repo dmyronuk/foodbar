@@ -77,6 +77,19 @@
       font-weight:bold;
       font-size:1.1em;
     }
+
+    .order-update{
+      color:red;
+      font-size:1rem;
+    }
+
+    .order-placed{
+      color:blue;
+    }
+
+    .order-failed{
+      color:red;
+    }
   }
 
   button{
@@ -101,3 +114,4 @@
   opacity:0.5;
   z-index:8000;
 }
+
