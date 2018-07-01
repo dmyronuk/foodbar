@@ -231,28 +231,33 @@ app.post("/cart", (req, res) => {
   let total_cost = subTotal + tax;
   let ready_time = getReadyTimeStr(40);
 
-  queries.selectCustomerFromEmail(req.session.email).then(result => {
-    let info = result[0];
+  //order must contain items
+  if(Object.keys(cart).length === 0){
+    res.json({success: false});
+  }else{
+    queries.selectCustomerFromEmail(req.session.email).then(result => {
+      let info = result[0];
 
-    //data: first_name, restaurant_name, total_cost, ready_time
-    let msg = createSMSString({
-      first_name: info.first_name,
-      restaurant_name: "Good Restaurant",
-      total_cost: total_cost,
-      ready_time: ready_time
+      //data: first_name, restaurant_name, total_cost, ready_time
+      let msg = createSMSString({
+        first_name: info.first_name,
+        restaurant_name: "Good Restaurant",
+        total_cost: total_cost,
+        ready_time: ready_time
+      })
+
+      twilioClient.messages
+      .create({
+         body: msg,
+         from: twilioNumber,
+         to: `+1${info.phone_number.replace("-", "")}`
+      })
+      .then(message => console.log("Twilio SID:", message.sid))
+      .done();
+
+      res.json({success: true});
     })
-
-    twilioClient.messages
-    .create({
-       body: msg,
-       from: twilioNumber,
-       to: `+1${info.phone_number.replace("-", "")}`
-    })
-    .then(message => console.log("Twilio SID:", message.sid))
-    .done();
-
-    res.json("Hey we did it guys");
-  })
+  }
 });
 
 //Ajax request handler - get all the menu items for a given menu_id

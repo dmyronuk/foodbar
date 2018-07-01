@@ -1,31 +1,49 @@
-
 function confirmOrderHandler(event){
   $.ajax({
     type: "POST",
     url:"/cart",
     success: function(data){
-      console.log(data);
+      if(data.success){
+        updateCartOrderPlaced();
+      }else{
+        updateCartOrderFailed();
+      }
     }
   })
-}
+};
 
 function removeCartItemHandler(event){
   event.preventDefault();
-  let $target = $(event.target);
+  var $target = $(event.target);
   var id = $target.attr("id");
-  console.log($target.parent().serialize())
 
   $.ajax({
     type: "POST",
     data: $target.parent().serialize(),
     url: `/cart/items/${id}/delete`,
     success: function(data){
-      //when item is deleted, remove line in cart from DOM
-      console.log(data);
       updateDOMCart(data, $target);
     }
   })
-}
+};
+
+function updateCartOrderPlaced(){
+  $("#confirm-order").remove();
+  var $orderUpdate = $(`
+    <div>Order Placed</div>
+    <div>Confirmation will be sent via text-message</div>
+  `).addClass("order-placed order-update");
+  $("footer").append($orderUpdate);
+};
+
+function updateCartOrderFailed(){
+  $("#confirm-order").remove();
+  var $orderUpdate =$(`
+    <div>Order Failed</div>
+    <div>Please add a few items</div>
+  `).addClass("order-failed order-update");
+  $("footer").append($orderUpdate);
+};
 
 function updateDOMCart(data, $target){
   //subtotal-td tax-td total-td
