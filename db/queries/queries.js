@@ -31,7 +31,9 @@ module.exports = {
   // function insertIntoOrderLines(obj)
   insertIntoOrderLines,
   // function insertOrder(email)
-  insertOrder
+  insertOrder,
+  
+  getTotalPrepTimeFromLatestOrder
 
 }
 
@@ -235,17 +237,39 @@ function selectOrderLinesFromRestaurants(restaurantId){
   .where("menus.restaurant_id", restaurantId)
 }
 
+async function getTotalPrepTimeFromLatestOrder(){
+  const arr = [];
+  const order = await knex("orders")
+  const prepTime = await knex
+    .select("total_prep_time", "orders.order_id")
+    .from("orders")
+    .join("orderLines", "orders.order_id", "orderLines.order_id")
+    .join("customers", "orders.customer_id", "customers.customer_id") 
+    .orderBy("orders.order_id", "desc")
+    .where({
+      "orderLines.status": "In Progress"
+    })
+
+    prepTime.forEach((x) =>{
+      if (x.order_id === order.length){
+        arr.push(x.total_prep_time)
+      }
+    })  
+    let sumArr = arr.reduce((a,c) => a + c);
+    return sumArr;
+}
 
 
 
 
 
 
-selectOrdersFromOrderLines(3).then(result =>{
-  console.log(result)
-})
+// selectOrdersFromOrderLines(3).then(result =>{
+//   console.log(result)
+// })
 
 // selectOrderLinesFromRestaurants(1)
+// getTotalPrepTimeFromLatestOrder()
 // .then(result =>{
 //   console.log(result)
 // })
