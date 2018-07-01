@@ -52,6 +52,12 @@ function updateDOMCart(data, $target){
   $("#tax-td").html("$" + data.tax);
   $("#total-td").html("$" + data.total);
   $("#total-footer").html("$" + data.total);
+
+  if(data.total === "0.00"){
+    var $container = $(".cart-container").find("section");
+    $container.empty();
+    $container.append("<h3>Nothing Here!</h3>");
+  }
 };
 
 function createDOMCart(data){

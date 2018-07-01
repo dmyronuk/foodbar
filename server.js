@@ -55,34 +55,59 @@ app.use(nodeSassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, "./public")));
 
-//prep time in minutes
-const getReadyTimeStr = (prepTime) => {
-  let curDate = new Date();
-  let readyTimeMs = curDate.getTime() + 1000 * 60 * prepTime;
+//minutes offSet variable represents minutes in the future relative to time when function called
+const getTimeStr = (minutesOffset, offsetFromUTC) => {
+  let date = new Date();
+  let dateWithOffset = date.setHours(date.getHours() + offsetFromUTC);
+  let readyTimeMs = dateWithOffset + 1000 * 60 * minutesOffset;
   let readyTime = new Date(readyTimeMs);
-
   let hours = readyTime.getHours();
   let minutes = readyTime.getMinutes();
-  let suffix = "am"
-  hours -= 4;
-  if (hours < 0) {
-    hours += 24
-  }
-  if(hours > 12){
+  let suffix = (hours > 11) ? "pm" : "am";
+  if(hours === 0){
+    hours = 12;
+  }else if(hours > 12){
     hours -= 12;
-    suffix = "pm";
   }
   let outStr = `${hours}:${minutes}${suffix}`;
   return outStr;
 }
 
 //data: first_name, restaurant_name, total_cost, ready_time
-const createSMSString = (data) => {
+const createClientSMS = (data) => {
   let lineA = `Hello ${data.first_name}! Your order from ${data.restaurant_name} `;
   let lineB = `will be ready at approximately ${data.ready_time}.`;
   let lineC = `\n\nTotal due: $${data.total_cost.toFixed(2)}`;
   return lineA + lineB + lineC;
 }
+
+const createRestaurantSMS = (data) => {
+  let outStr = "";
+  let curTime = getTimeStr(0, -4);
+  outStr += `Order placed by ${data.first_name} ${data.last_name} at ${curTime}\n`
+
+  for(key in data.cart){
+    let curItem = data.cart[key];
+    outStr += `${curItem.quantity} x ${curItem.item_name}\n`;
+  }
+  return outStr;
+}
+
+let sendSMS = (data, dataToStringFunction) => {
+  let msg = dataToStringFunction(data);
+  console.log(msg);
+
+  //`+16475376750` Adib
+  twilioClient.messages
+  .create({
+     body: msg,
+     from: twilioNumber,
+     to: data.recipient_phone_number,
+  })
+  .then(message => console.log("Twilio SID:", message.sid))
+  .done();
+}
+
 
 //remove underscores and cap first letter
 const prettyFormatFormField = (field_val) => {
@@ -135,8 +160,8 @@ app.get("/", (req, res) => {
 
 app.get("/404", (req, res) => {
   let templateVars = {
-    email:req.session.email,
-    first_name:req.session.first_name,
+    email: req.session.email,
+    first_name: req.session.first_name,
   };
   res.render("404", templateVars);
 });
@@ -245,7 +270,7 @@ app.post("/cart", (req, res) => {
   let subTotal = calculateCartTotal(req.session.cart);
   let tax = subTotal * 0.13;
   let total_cost = subTotal + tax;
-  let ready_time = getReadyTimeStr(40);
+  let ready_time = getTimeStr(40, -4);
 
   //order must contain items
   if(Object.keys(cart).length === 0){
@@ -264,22 +289,22 @@ app.post("/cart", (req, res) => {
     queries.selectCustomerFromEmail(req.session.email).then(result => {
       let info = result[0];
 
-      //data: first_name, restaurant_name, total_cost, ready_time
-      let msg = createSMSString({
+      sendSMS({
+        cart: req.session.cart,
+        first_name: info.first_name,
+        last_name: info.last_name,
+        total_cost: total_cost,
+        ready_time: ready_time,
+        recipient_phone_number: "+16475376750",
+      }, createRestaurantSMS);
+
+      sendSMS({
         first_name: info.first_name,
         restaurant_name: "Good Restaurant",
         total_cost: total_cost,
-        ready_time: ready_time
-      })
-
-      twilioClient.messages
-      .create({
-         body: msg,
-         from: twilioNumber,
-         to: `+1${info.phone_number.replace("-", "")}`
-      })
-      .then(message => console.log("Twilio SID:", message.sid))
-      .done();
+        ready_time: ready_time,
+        recipient_phone_number: `+1${info.phone_number.replace("-", "")}`,
+      }, createClientSMS);
 
       req.session.cart = {};
       res.json({success: true});
@@ -293,9 +318,9 @@ app.get("/menus/:menu_id", (req, res) => {
 
   queries.selectItemsFromMenu(req.params.menu_id).then(result=>{
     res.json({
-      mains:result.mains,
-      appetizers:result.appetizers,
-      beverages:result.beverages,
+      mains: result.mains,
+      appetizers: result.appetizers,
+      beverages: result.beverages,
     });
   })
 });
@@ -375,19 +400,28 @@ app.get("/signup", (req, res) => {
   //check if previous signup attempt set any session cookie errors ie failed validation
   //save error as template var and destroy cookie
   let signup_field_errs;
+  let auth_err;
+
+  if(req.session.auth_err){
+    auth_err = req.session.auth_err;
+    req.session.auth_err = null;
+  }
+
   if(req.session.signup_field_errs){
     signup_field_errs = req.session.signup_field_errs;
     req.session.signup_field_errs = null;
   }
   let templateVars = {
-    email:req.session.email,
-    first_name:req.session.first_name,
-    signup_field_errs:signup_field_errs,
+    email: req.session.email,
+    first_name: req.session.first_name,
+    signup_field_errs: signup_field_errs,
+    auth_err: auth_err,
   }
   res.render("signup", templateVars);
 });
 
 app.post("/signup", (req, res) => {
+  //if time replace this with flash messages
   let fields = ["email", "password", "first_name", "last_name", "phone_number"]
   let signup_field_errs = [];
 
@@ -408,7 +442,9 @@ app.post("/signup", (req, res) => {
 
       //if there is an existing user with the email, reject
       if(result.length > 0){
+        req.session.auth_err = "Email already exists";
         res.redirect("/signup");
+
       //success - push the new user into the database and redirect to home page
       }else{
         queries.insertIntoCustomers({

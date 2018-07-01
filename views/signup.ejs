@@ -33,6 +33,14 @@
 
           </div>
         <% } %>
+
+        <% if(auth_err){ %>
+          <div class="auth-err-container">
+            <div class="auth-err-msg">
+              <%= auth_err %>
+            </div>
+          </div>
+        <% } %>
       </div>
     </section>
 
