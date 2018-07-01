@@ -299,6 +299,13 @@ app.get("/menus/:menu_id", (req, res) => {
   })
 });
 
+app.get("/orders/", (req, res) => {
+
+  res.render("orders", {
+    email:req.session.email,
+  })
+})
+
 app.get("/login", (req, res) => {
   //login_field_errs represent missing fields - login validation errors represent some kind of authentication failure
   let login_field_errs;
