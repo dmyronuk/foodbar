@@ -25,14 +25,12 @@ module.exports = {
 // function selectAllInfoFromRestaurants(restaurantId)
   selectAllInfoFromRestaurants,
 // function showCartItemsFromEmail(email)
-
   showCartItemsFromEmail,
-
   // function insertIntoOrderLines(obj)
   insertIntoOrderLines,
   // function insertOrder(email)
   insertOrder,
-  
+
   getTotalPrepTimeFromLatestOrder
 
 }
@@ -56,7 +54,6 @@ function insertIntoCustomers(obj){
   })
 }
 
-/*return every item from menu_id with name(of menu), item_name, description, price, url*/
 function selectItemsFromMenu(menuId){
   return knex("menus")
     .join("menu_items", "menus.menu_id", "menu_items.menu_id")
@@ -78,14 +75,12 @@ function selectItemsFromMenu(menuId){
     })
 }
 
-/*gets a hashed password that matches its email*/
 function getPass(email) {
   return knex("logins")
     .select("logins.password")
     .where("email", email)
 }
 
-/*given an order_id, shows items in a cart*/
 function showCartItemsFromEmail(email) {
   return knex("orderLines")
     .join("orders", "orderLines.order_id", "orders.order_id")
@@ -104,61 +99,6 @@ function createActiveCart(email) {
     .join("orders", "customers.customer_id", "order.customer_id")
     .join("orderLines", "orders.order_id", "orderLines.order_id")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//-----------------------------------------------------------------------------------------------------------------------------------
-
 
 function selectMenusFromRestaurants(restaurantId){
   return knex("menus")
@@ -196,6 +136,7 @@ function insertOrder(email){
 }
 
 async function insertIntoOrderLines(obj) {
+  // selecting the orders from an obj (e.g cookie data)
   const orders = await knex("orders").select()
   const menuItems = await
       knex("menu_items")
@@ -203,7 +144,7 @@ async function insertIntoOrderLines(obj) {
       .select()
       .where("items.item_id", obj.item_id)
 
-
+      // insert into orderLines
   return knex("orderLines").insert([
       {
         order_id: (orders[orders.length - 1].order_id) + 1,
@@ -250,6 +191,7 @@ async function getTotalPrepTimeFromLatestOrder(){
       "orderLines.status": "In Progress"
     })
 
+  // turning the object into an array, then reducing to get the sum of prep times
     prepTime.forEach((x) =>{
       if (x.order_id === order.length){
         arr.push(x.total_prep_time)
@@ -258,19 +200,3 @@ async function getTotalPrepTimeFromLatestOrder(){
     let sumArr = arr.reduce((a,c) => a + c);
     return sumArr;
 }
-
-
-
-
-
-
-// selectOrdersFromOrderLines(3).then(result =>{
-//   console.log(result)
-// })
-
-// selectOrderLinesFromRestaurants(1)
-// getTotalPrepTimeFromLatestOrder()
-// .then(result =>{
-//   console.log(result)
-// })
-

@@ -55,6 +55,14 @@ app.use(nodeSassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, "./public")));
 
+
+const addZeroToTime = (i) => {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+}
+
 //minutes offSet variable represents minutes in the future relative to time when function called
 const getTimeStr = (minutesOffset, offsetFromUTC) => {
   let date = new Date();
@@ -62,7 +70,7 @@ const getTimeStr = (minutesOffset, offsetFromUTC) => {
   let readyTimeMs = dateWithOffset + 1000 * 60 * minutesOffset;
   let readyTime = new Date(readyTimeMs);
   let hours = readyTime.getHours();
-  let minutes = readyTime.getMinutes();
+  let minutes = addZeroToTime(readyTime.getMinutes());
   let suffix = (hours > 11) ? "pm" : "am";
   if(hours === 0){
     hours = 12;
@@ -95,9 +103,6 @@ const createRestaurantSMS = (data) => {
 
 let sendSMS = (data, dataToStringFunction) => {
   let msg = dataToStringFunction(data);
-  console.log(msg);
-
-  //`+16475376750` Adib
   twilioClient.messages
   .create({
      body: msg,
@@ -276,22 +281,25 @@ app.post("/cart", (req, res) => {
   if(Object.keys(cart).length === 0){
     res.json({success: false});
   }else{
+    // 
     let cartArr = convertCartObjToArray(cart, req.session.email);
 
+    // creates an Array of insert into orderLines promises to pass into Promise.All later
     let allPromises = cartArr.map(function (key){
       return queries.insertIntoOrderLines(key);
     });
 
-    // async function updateDBwithOrders()
+    // function calls all the promises in the correct order
     async function asyncCall (){
       const insertOrder = await queries.insertOrder(req.session.email);
       const insertOrderLines = await Promise.all(allPromises);
       const customers = await queries.selectCustomerFromEmail(req.session.email);
       const prepTime = await queries.getTotalPrepTimeFromLatestOrder();
+
+
       let info = customers[0];
 
-      console.log(prepTime);
-
+      // sends SMS to restaurant
       sendSMS({
         cart: req.session.cart,
         first_name: info.first_name,
@@ -301,60 +309,24 @@ app.post("/cart", (req, res) => {
         recipient_phone_number: "+16475376750",
       }, createRestaurantSMS);
 
+      // sends SMS to Customer
       sendSMS({
         first_name: info.first_name,
         restaurant_name: "Good Restaurant",
         total_cost: total_cost,
+        // formatting the prepTime
         ready_time: getTimeStr(prepTime, -4),
         recipient_phone_number: `+1${info.phone_number.replace("-", "")}`,
       }, createClientSMS);
 
       req.session.cart = {};
-      res.json({success: true});
-
-      return
+      return res.json({success: true});
 
     }
-    asyncCall()
-    // queries.insertOrder(req.session.email).then(()=>{
-    //   Promise.all(allPromises)
-    // });
-
-    // queries.selectCustomerFromEmail(req.session.email).then(result => {
-    //   let info = result[0];
-
-    //   sendSMS({
-    //     cart: req.session.cart,
-    //     first_name: info.first_name,
-    //     last_name: info.last_name,
-    //     total_cost: total_cost,
-    //     ready_time: ready_time,
-    //     recipient_phone_number: "+16475376750",
-    //   }, createRestaurantSMS);
-
-    //   sendSMS({
-    //     first_name: info.first_name,
-    //     restaurant_name: "Good Restaurant",
-    //     total_cost: total_cost,
-    //     ready_time: ready_time,
-    //     recipient_phone_number: `+1${info.phone_number.replace("-", "")}`,
-    //   }, createClientSMS);
-
-    //   req.session.cart = {};
-    //   res.json({success: true});
-    // })
+    asyncCall();
   }
 });
 
-//twillio #+13069940672
-app.post('/sms', (req, res) => {
-  const twiml = new MessagingResponse();
-
-  twiml.message('The Robots are coming! Head for the hills!');
-
-  res.writeHead(200, {'Content-Type': 'text/xml'});
-  res.end(twiml.toString());
-});
 
 //Ajax request handler - get all the menu items for a given menu_id
 app.get("/menus/:menu_id", (req, res) => {
@@ -369,6 +341,8 @@ app.get("/menus/:menu_id", (req, res) => {
   })
 });
 
+
+// renders order page
 app.get("/orders/", (req, res) => {
 
   res.render("orders", {
