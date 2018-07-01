@@ -135,8 +135,8 @@ app.get("/", (req, res) => {
 
 app.get("/404", (req, res) => {
   let templateVars = {
-    email:req.session.email,
-    first_name:req.session.first_name,
+    email: req.session.email,
+    first_name: req.session.first_name,
   };
   res.render("404", templateVars);
 });
@@ -293,9 +293,9 @@ app.get("/menus/:menu_id", (req, res) => {
 
   queries.selectItemsFromMenu(req.params.menu_id).then(result=>{
     res.json({
-      mains:result.mains,
-      appetizers:result.appetizers,
-      beverages:result.beverages,
+      mains: result.mains,
+      appetizers: result.appetizers,
+      beverages: result.beverages,
     });
   })
 });
@@ -368,19 +368,28 @@ app.get("/signup", (req, res) => {
   //check if previous signup attempt set any session cookie errors ie failed validation
   //save error as template var and destroy cookie
   let signup_field_errs;
+  let auth_err;
+
+  if(req.session.auth_err){
+    auth_err = req.session.auth_err;
+    req.session.auth_err = null;
+  }
+
   if(req.session.signup_field_errs){
     signup_field_errs = req.session.signup_field_errs;
     req.session.signup_field_errs = null;
   }
   let templateVars = {
-    email:req.session.email,
-    first_name:req.session.first_name,
-    signup_field_errs:signup_field_errs,
+    email: req.session.email,
+    first_name: req.session.first_name,
+    signup_field_errs: signup_field_errs,
+    auth_err: auth_err,
   }
   res.render("signup", templateVars);
 });
 
 app.post("/signup", (req, res) => {
+  //if time replace this with flash messages
   let fields = ["email", "password", "first_name", "last_name", "phone_number"]
   let signup_field_errs = [];
 
@@ -401,7 +410,9 @@ app.post("/signup", (req, res) => {
 
       //if there is an existing user with the email, reject
       if(result.length > 0){
+        req.session.auth_err = "Email already exists";
         res.redirect("/signup");
+
       //success - push the new user into the database and redirect to home page
       }else{
         queries.insertIntoCustomers({
