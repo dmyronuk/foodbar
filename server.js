@@ -56,18 +56,14 @@ app.use(nodeSassMiddleware({
 app.use(express.static(path.join(__dirname, "./public")));
 
 //minutes offSet variable represents minutes in the future relative to time when function called
-const getTimeStr = (minutesOffset) => {
-  let curDate = new Date();
-  let readyTimeMs = curDate.getTime() + 1000 * 60 * minutesOffset;
+const getTimeStr = (minutesOffset, offsetFromUTC) => {
+  let date = new Date();
+  let dateWithOffset = date.setHours(date.getHours() + offsetFromUTC);
+  let readyTimeMs = dateWithOffset + 1000 * 60 * minutesOffset;
   let readyTime = new Date(readyTimeMs);
-
   let hours = readyTime.getHours();
   let minutes = readyTime.getMinutes();
   let suffix = "am"
-  hours -= 4;
-  if (hours < 0) {
-    hours += 24
-  }
   if(hours > 12){
     hours -= 12;
     suffix = "pm";
@@ -86,7 +82,7 @@ const createClientSMS = (data) => {
 
 const createRestaurantSMS = (data) => {
   let outStr = "";
-  let curTime = getTimeStr(0);
+  let curTime = getTimeStr(0, -4);
   outStr += `Order placed by ${data.first_name} ${data.last_name} at ${curTime}\n`
 
   for(key in data.cart){
@@ -273,7 +269,7 @@ app.post("/cart", (req, res) => {
   let subTotal = calculateCartTotal(req.session.cart);
   let tax = subTotal * 0.13;
   let total_cost = subTotal + tax;
-  let ready_time = getTimeStr(40);
+  let ready_time = getTimeStr(40, -4);
 
   //order must contain items
   if(Object.keys(cart).length === 0){
