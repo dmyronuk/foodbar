@@ -64,12 +64,14 @@ const getReadyTimeStr = (prepTime) => {
   let hours = readyTime.getHours();
   let minutes = readyTime.getMinutes();
   let suffix = "am"
+  hours -= 4;
+  if (hours < 0) {
+    hours += 24
+  }
   if(hours > 12){
     hours -= 12;
     suffix = "pm";
   }
-  //time is wrong on our vagrant machines
-  hours -= 4;
   let outStr = `${hours}:${minutes}${suffix}`;
   return outStr;
 }
@@ -77,7 +79,7 @@ const getReadyTimeStr = (prepTime) => {
 //data: first_name, restaurant_name, total_cost, ready_time
 const createSMSString = (data) => {
   let lineA = `Hello ${data.first_name}! Your order from ${data.restaurant_name} `;
-  let lineB = `will be ready in It will be ready at approximately ${data.ready_time}.`;
+  let lineB = `will be ready at approximately ${data.ready_time}.`;
   let lineC = `\n\nTotal due: $${data.total_cost.toFixed(2)}`;
   return lineA + lineB + lineC;
 }
