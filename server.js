@@ -312,6 +312,16 @@ app.post("/cart", (req, res) => {
   }
 });
 
+//twillio #+13069940672
+app.post('/sms', (req, res) => {
+  const twiml = new MessagingResponse();
+
+  twiml.message('The Robots are coming! Head for the hills!');
+
+  res.writeHead(200, {'Content-Type': 'text/xml'});
+  res.end(twiml.toString());
+});
+
 //Ajax request handler - get all the menu items for a given menu_id
 app.get("/menus/:menu_id", (req, res) => {
   let outData = mockDB.items[0];
