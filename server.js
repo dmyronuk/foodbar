@@ -64,7 +64,6 @@ const getReadyTimeStr = (prepTime) => {
   };
   let readyTimeMs = Date.withOffset(-4).getTime() + 1000 * 60 * prepTime;
   let readyTime = new Date(readyTimeMs);
-  console.log(readyTime)
   let hours = readyTime.getHours();
   let minutes = readyTime.getMinutes();
   let suffix = "am"
