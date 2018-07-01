@@ -96,6 +96,22 @@ const createRestaurantSMS = (data) => {
   return outStr;
 }
 
+let sendSMS = (data, dataToStringFunction) => {
+  let msg = dataToStringFunction(data);
+  console.log(msg);
+
+  //`+16475376750` Adib
+  twilioClient.messages
+  .create({
+     body: msg,
+     from: twilioNumber,
+     to: data.recipient_phone_number,
+  })
+  .then(message => console.log("Twilio SID:", message.sid))
+  .done();
+}
+
+
 //remove underscores and cap first letter
 const prettyFormatFormField = (field_val) => {
   let wordArr = field_val.split("_");
@@ -276,39 +292,22 @@ app.post("/cart", (req, res) => {
     queries.selectCustomerFromEmail(req.session.email).then(result => {
       let info = result[0];
 
-      let restaurantMsg = createRestaurantSMS({
+      sendSMS({
         cart: req.session.cart,
         first_name: info.first_name,
         last_name: info.last_name,
         total_cost: total_cost,
-        ready_time: ready_time
-      });
+        ready_time: ready_time,
+        recipient_phone_number: "+16475376750",
+      }, createRestaurantSMS);
 
-      //data: first_name, restaurant_name, total_cost, ready_time
-      let clientMsg = createClientSMS({
+      sendSMS({
         first_name: info.first_name,
         restaurant_name: "Good Restaurant",
         total_cost: total_cost,
-        ready_time: ready_time
-      });
-
-      twilioClient.messages
-      .create({
-         body: restaurantMsg,
-         from: twilioNumber,
-         to: `+16475376750`
-      })
-      .then(message => console.log("Twilio SID:", message.sid))
-      .done();
-
-      twilioClient.messages
-      .create({
-         body: clientMsg,
-         from: twilioNumber,
-         to: `+1${info.phone_number.replace("-", "")}`
-      })
-      .then(message => console.log("Twilio SID:", message.sid))
-      .done();
+        ready_time: ready_time,
+        recipient_phone_number: `+1${info.phone_number.replace("-", "")}`,
+      }, createClientSMS);
 
       req.session.cart = {};
       res.json({success: true});
