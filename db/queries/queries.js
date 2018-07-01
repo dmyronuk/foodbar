@@ -214,3 +214,39 @@ async function insertIntoOrderLines(obj) {
       ]).asCallback()
 }
 
+function selectOrdersFromOrderLines(orderId){
+  return knex("orders")
+  .join("orderLines", "orders.order_id", "orderLines.order_id")
+  .join("customers", "orders.customer_id", "customers.customer_id")
+  .select()
+  .where({
+    "orders.order_id": orderId,
+    "orderLines.status": "In Progress"
+    })
+}
+
+
+function selectOrderLinesFromRestaurants(restaurantId){
+  return knex("orderLines")
+  .join("menu_items", "menu_items.menu_item_id", "orderLines.menu_item_id")
+  .join("menus", "menu_items.menu_id", "menus.menu_id")
+  .select()
+  .select("orderLines_id")
+  .where("menus.restaurant_id", restaurantId)
+}
+
+
+
+
+
+
+
+selectOrdersFromOrderLines(3).then(result =>{
+  console.log(result)
+})
+
+// selectOrderLinesFromRestaurants(1)
+// .then(result =>{
+//   console.log(result)
+// })
+
