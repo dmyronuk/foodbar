@@ -24,6 +24,24 @@
 
   section{
     flex-grow:1;
+
+    .cart-remove-button{
+      border-radius:$default-button-border-radius;
+      color:blue;
+      padding:0.2em 0.8em 0.2em 0.8em;
+      border:none;
+      background-color:transparent;
+      transition:background-color 1s;
+      cursor:pointer;
+
+      &:hover{
+        background:transparent;
+      }
+    }
+
+    h3{
+      margin-top:1em;
+    }
   }
 
   table{
