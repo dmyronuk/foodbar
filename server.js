@@ -103,6 +103,20 @@ const calculateCartTotal = function(cart){
   },0);
 }
 
+//Frank's transform function for POST /carts
+//transforms req.session.cart into something usable by the query
+function convertCartObjToArray(cart, email){
+  let arr = [];
+  const itemIDs = Object.keys(cart)
+  const items = Object.values(cart)
+  for (var i = 0; i < itemIDs.length; i++) {
+    items[i].item_id = itemIDs[i]
+    items[i].email = email
+    arr.push(items[i])
+  }
+  return arr;
+};
+
 //index page
 app.get("/", (req, res) => {
   let login_field_errs;
@@ -237,6 +251,16 @@ app.post("/cart", (req, res) => {
   if(Object.keys(cart).length === 0){
     res.json({success: false});
   }else{
+    let cartArr = convertCartObjToArray(cart, req.session.email);
+
+    let allPromises = cartArr.map(function (key){
+      return queries.insertIntoOrderLines(key);
+    });
+
+    queries.insertOrder(req.session.email).then(()=>{
+      Promise.all(allPromises)
+    });
+
     queries.selectCustomerFromEmail(req.session.email).then(result => {
       let info = result[0];
 
