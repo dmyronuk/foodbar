@@ -57,17 +57,17 @@ app.use(express.static(path.join(__dirname, "./public")));
 
 //prep time in minutes
 const getReadyTimeStr = (prepTime) => {
-  let curDate = new Date();
-  let readyTimeMs = curDate.getTime() + 1000 * 60 * prepTime;
+  Date.withOffset = function( offset ){
+    var curDate = new Date();
+    curDate.setHours(curDate.getHours()+offset);
+    return curDate;
+  };
+  let readyTimeMs = Date.withOffset(-4).getTime() + 1000 * 60 * prepTime;
   let readyTime = new Date(readyTimeMs);
-
+  console.log(readyTime)
   let hours = readyTime.getHours();
   let minutes = readyTime.getMinutes();
   let suffix = "am"
-  hours -= 4;
-  if (hours < 0) {
-    hours += 24
-  }
   if(hours > 12){
     hours -= 12;
     suffix = "pm";
