@@ -295,6 +295,7 @@ app.post("/cart", (req, res) => {
       const insertOrderLines = await Promise.all(allPromises);
       const customers = await queries.selectCustomerFromEmail(req.session.email);
       const prepTime = await queries.getTotalPrepTimeFromLatestOrder();
+      const restaurants = await queries.selectAllInfoFromRestaurants(1);
 
 
       let info = customers[0];
@@ -306,7 +307,7 @@ app.post("/cart", (req, res) => {
         last_name: info.last_name,
         total_cost: total_cost,
         ready_time: ready_time,
-        recipient_phone_number: "+16475376750",
+        recipient_phone_number: `+1${restaurants[0].phone_number.replace("-", "")}`,
       }, createRestaurantSMS);
 
       // sends SMS to Customer
