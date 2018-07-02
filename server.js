@@ -10,28 +10,6 @@ const bcrypt = require("bcrypt")
 const queries = require("./db/queries/queries.js");
 const twilioNumber = '+13069940672'; //later load from ENV VARIABLE
 
-const mockDB = {
-  users:{},
-  restaurants:{
-    1:{
-      name: "Great Restaurant",
-      address: "10 Drury Lane",
-      phone_number: "444-444-4444",
-    }
-  },
-  items:[
-    {
-      id:99,
-      name:"Hamburger",
-      description:"Ethical you probably haven't heard of them flannel chia health goth lumbersexual twee fingerstache keffiyeh polaroid.",
-      price:"10.99",
-      imageURL:"/images/burger-2.jpg",
-      prep_time:10
-    },
-  ],
-  cart:[]
-};
-
 app.use(cookieSession({
   name: "session",
   resave: true,
@@ -83,10 +61,9 @@ const getTimeStr = (minutesOffset, offsetFromUTC) => {
 
 //data: first_name, restaurant_name, total_cost, ready_time
 const createClientSMS = (data) => {
-  let lineA = `Hello ${data.first_name}! Your order from ${data.restaurant_name} `;
-  let lineB = `will be ready at approximately ${data.ready_time}.`;
-  let lineC = `\n\nTotal due: $${data.total_cost.toFixed(2)}`;
-  return lineA + lineB + lineC;
+  let lineA = `Hello ${data.first_name}! Thank you for ordering from FoodBar! `;
+  let lineB = `Your order will be ready in approximately ${data.prep_time} minutes.`;
+  return lineA + lineB;
 }
 
 const createRestaurantSMS = (data) => {
@@ -286,7 +263,7 @@ app.post("/cart", (req, res) => {
   if(Object.keys(cart).length === 0){
     res.json({success: false});
   }else{
-    // 
+    //
     let cartArr = convertCartObjToArray(cart, req.session.email);
 
     // creates an Array of insert into orderLines promises to pass into Promise.All later
@@ -302,7 +279,6 @@ app.post("/cart", (req, res) => {
       const prepTime = await queries.getTotalPrepTimeFromLatestOrder();
       const restaurants = await queries.selectAllInfoFromRestaurants(1);
 
-
       let info = customers[0];
 
       // sends SMS to restaurant
@@ -315,16 +291,6 @@ app.post("/cart", (req, res) => {
         recipient_phone_number: `+1${restaurants[0].phone_number.replace("-", "")}`,
       }, createRestaurantSMS);
 
-      // sends SMS to Customer
-      sendSMS({
-        first_name: info.first_name,
-        restaurant_name: restaurants[0].name,
-        total_cost: total_cost,
-        // formatting the prepTime
-        ready_time: getTimeStr(prepTime, 0),
-        recipient_phone_number: `+1${info.phone_number.replace("-", "")}`,
-      }, createClientSMS);
-
       req.session.cart = {};
       return res.json({success: true});
 
@@ -336,7 +302,6 @@ app.post("/cart", (req, res) => {
 
 //Ajax request handler - get all the menu items for a given menu_id
 app.get("/menus/:menu_id", (req, res) => {
-  let outData = mockDB.items[0];
 
   queries.selectItemsFromMenu(req.params.menu_id).then(result=>{
     res.json({
@@ -347,6 +312,59 @@ app.get("/menus/:menu_id", (req, res) => {
   })
 });
 
+app.get("/orders", (req, res) => {
+  queries.getLatestOrder().then(result => {
+    let order_info = result[0];
+    queries.getItemsFromOrderId(order_info.order_id).then(items => {
+
+      let parsedItems = items.reduce((acc, cur) => {
+        acc.push({
+          name: cur.item_name,
+          quantity: cur.quantity,
+        })
+        return acc;
+      }, []);
+
+      let templateVars = {
+        order_id: order_info.order_id,
+        first_name: order_info.first_name,
+        last_name: order_info.last_name,
+        phone_number: order_info.phone_number,
+        items: parsedItems,
+        email: req.session.email
+      }
+      console.log(templateVars)
+      res.render("orders", templateVars);
+    })
+  })
+})
+
+app.post("/orders", (req, res) => {
+  if(req.body.time && Number(req.body.time) > 0){
+    queries.getLatestOrder().then(result => {
+      // sends SMS to Customer
+
+    let order_info = result[0]
+
+    let sms = createClientSMS({
+      first_name: order_info.first_name,
+      prep_time: req.body.time,
+      recipient_phone_number: `+1${order_info.phone_number.replace("-", "")}`,
+    })
+    console.log(sms)
+
+    sendSMS({
+      first_name: order_info.first_name,
+      prep_time: req.body.time,
+      recipient_phone_number: `+1${order_info.phone_number.replace("-", "")}`,
+    }, createClientSMS);
+
+      res.json({"success":true});
+    })
+  }else{
+    res.json({"success":false});
+  }
+})
 
 app.get("/login", (req, res) => {
   //login_field_errs represent missing fields - login validation errors represent some kind of authentication failure

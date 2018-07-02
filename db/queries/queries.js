@@ -31,7 +31,13 @@ module.exports = {
   // function insertOrder(email)
   insertOrder,
 
-  getTotalPrepTimeFromLatestOrder
+  getTotalPrepTimeFromLatestOrder,
+
+  selectOrdersFromOrderLines,
+
+  getLatestOrder,
+
+  getItemsFromOrderId
 
 }
 
@@ -185,7 +191,7 @@ async function getTotalPrepTimeFromLatestOrder(){
     .select("total_prep_time", "orders.order_id")
     .from("orders")
     .join("orderLines", "orders.order_id", "orderLines.order_id")
-    .join("customers", "orders.customer_id", "customers.customer_id") 
+    .join("customers", "orders.customer_id", "customers.customer_id")
     .orderBy("orders.order_id", "desc")
     .where({
       "orderLines.status": "In Progress"
@@ -196,7 +202,25 @@ async function getTotalPrepTimeFromLatestOrder(){
       if (x.order_id === order.length){
         arr.push(x.total_prep_time)
       }
-    })  
+    })
     let sumArr = arr.reduce((a,c) => a + c);
     return sumArr;
 }
+
+async function getLatestOrder(){
+  let maxOrderId = await knex("orders")
+    .max("order_id")
+
+  return knex("orders")
+    .select("*")
+    .where("order_id", maxOrderId[0].max)
+    .join("customers", "orders.customer_id", "customers.customer_id");
+}
+
+async function getItemsFromOrderId(orderId){
+  return knex("orderLines")
+    .select()
+    .where("order_id", orderId)
+    .join("menu_items", "orderLines.menu_item_id", "menu_items.menu_item_id")
+}
+

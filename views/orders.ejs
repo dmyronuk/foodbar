@@ -2,17 +2,31 @@
 <html>
   <head>
     <% include partials/_head %>
+    <script src="/scripts/ajax-prep-time.js"></script>
   </head>
   <body>
     <% include partials/_nav %>
     <% include partials/_main-bg-img %>
 
-    <div class="flex-row-container">
-      <div class="orders-mid-container">
-        <div class="new-order">
+    <section class="flex-row-container">
+        <div class="order-container">
+          <section id="incoming-order">
+            <h4> Latest Order: </h4>
+            <div>  </div>
+            <div>For: <%= first_name%> <%= last_name%> </div>
+
+            <% items.forEach(elem => { %>
+
+              <div><%= elem.quantity %> x <%=elem.name %></div>
+            <% }) %>
+          </section>
+          <form class="order-prep-form">
+            <label for="time">How Long Will Prep Take?</label>
+            <input name="time" type="text">
+            <input type="submit" value="Send SMS">
+          </form>
         </div>
-      </div>
-    </div>
+    </section>
 
   </body>
 </html>
