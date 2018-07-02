@@ -318,7 +318,7 @@ app.post("/cart", (req, res) => {
       // sends SMS to Customer
       sendSMS({
         first_name: info.first_name,
-        restaurant_name: "Good Restaurant",
+        restaurant_name: restaurants[0].name,
         total_cost: total_cost,
         // formatting the prepTime
         ready_time: getTimeStr(prepTime, 0),
