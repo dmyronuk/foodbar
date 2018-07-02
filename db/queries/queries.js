@@ -103,7 +103,7 @@ function createActiveCart(email) {
 function selectMenusFromRestaurants(restaurantId){
   return knex("menus")
     .join("restaurants", "menus.restaurant_id", "restaurants.restaurant_id")
-    .select("menus.menu_id", "menus.name")
+    .select("menus.menu_id", "menus.name", "address", "phone_number", "restaurants.name as restaurants_name", "menus.name as menus_name")
     .where("menus.restaurant_id", restaurantId)
 }
 

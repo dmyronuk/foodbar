@@ -190,6 +190,11 @@ app.get("/restaurants/:id", (req, res) => {
         menusObj: menusObj,
         email: req.session.email,
         first_name: req.session.first_name,
+        address: menus[0].address,
+        phone_number: menus[0].phone_number,
+        first_menu_name: menus[0].menus_name,
+        second_menu_name: menus[1].menus_name,
+        restaurant_name: menus[0].restaurants_name,
       });
 
     //else no menus -- 404

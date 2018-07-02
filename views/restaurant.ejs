@@ -17,13 +17,13 @@
             </div>
             <div>
               <div>
-                <h2>Good Restaurant</h2>
+                <h2><%= restaurant_name %></h2>
               </div>
               <div>
-                <h4>444 Drury Lane</h4>
+                <h4><%= address %></h4>
               </div>
               <div>
-                <h4>647-999-9999</h4>
+                <h4><%= phone_number %></h4>
               </div>
           </header>
 
@@ -35,14 +35,14 @@
             <div>
               <div class="menu-img-container">
                 <h5>
-                  Lunch
+                  <%= first_menu_name %>
                 </h5>
                 <img class="menu_img" menu_id="<%= menusObj.lunch_menu_id %>" src="/images/burger.jpg"/>
               </div>
 
               <div class="menu-img-container">
                 <h5>
-                  Dinner
+                  <%= second_menu_name %>
                 </h5>
                 <img class="menu_img" menu_id="<%= menusObj.dinner_menu_id %>" src="/images/pasta.jpeg" />
               </div>
