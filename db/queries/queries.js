@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const settings = require('../settings')
 const knex = require('knex')({
   client: 'pg',
@@ -206,3 +207,4 @@ async function getTotalPrepTimeFromLatestOrder(){
 selectAllInfoFromRestaurants(1).then(result=>{
   console.log(result)
 })
+

