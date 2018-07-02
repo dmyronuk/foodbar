@@ -200,9 +200,3 @@ async function getTotalPrepTimeFromLatestOrder(){
     let sumArr = arr.reduce((a,c) => a + c);
     return sumArr;
 }
-
-
-
-selectAllInfoFromRestaurants(1).then(result=>{
-  console.log(result)
-})
