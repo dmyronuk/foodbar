@@ -1,30 +1,28 @@
-const tokens = require('./twilio_token')
-const accountSid = 'ACe8fda14d2cd2d5b6997bd8a1e08bf9c5';
-const authToken = tokens.TWILIO_TOKEN
-const twilioClient = require('twilio')(accountSid, authToken);//send a message
-const twilioNumber = '+13069940672'; //later load from ENV VARIABLE
-const client = require('twilio')(accountSid, authToken);//send a message
+const accountSID = process.env.TWILIO_ACCOUNT_SID
+const authToken = process.env.TWILIO_TOKEN
+const twilioClient = require('twilio')(accountSID, authToken);
+
+//minutes offSet variable represents minutes in the future relative to time when function called
+function getTimeStr(minutesOffset, offsetFromUTC){
+  let date = new Date();
+  let dateWithOffset = date.setHours(date.getHours() + offsetFromUTC);
+  let readyTimeMs = dateWithOffset + 1000 * 60 * minutesOffset;
+  let readyTime = new Date(readyTimeMs);
+  let hours = readyTime.getHours();
+  let minutes = readyTime.getMinutes();
+  if(minutes < 10) minutes = "0" + minutes;
+  let suffix = (hours > 11) ? "pm" : "am";
+  if(hours === 0){
+    hours = 12;
+  }else if(hours > 12){
+    hours -= 12;
+  }
+  let outStr = `${hours}:${minutes}${suffix}`;
+  return outStr;
+}
 
 module.exports = {
-
-  //minutes offSet variable represents minutes in the future relative to time when function called
-  getTimeStr: (minutesOffset, offsetFromUTC) => {
-    let date = new Date();
-    let dateWithOffset = date.setHours(date.getHours() + offsetFromUTC);
-    let readyTimeMs = dateWithOffset + 1000 * 60 * minutesOffset;
-    let readyTime = new Date(readyTimeMs);
-    let hours = readyTime.getHours();
-    let minutes = readyTime.getMinutes();
-    if(minutes < 10) minutes = "0" + minutes;
-    let suffix = (hours > 11) ? "pm" : "am";
-    if(hours === 0){
-      hours = 12;
-    }else if(hours > 12){
-      hours -= 12;
-    }
-    let outStr = `${hours}:${minutes}${suffix}`;
-    return outStr;
-  },
+  getTimeStr: getTimeStr,
 
   //data: first_name, restaurant_name, total_cost, ready_time
   createClientSMS: (data) => {
@@ -50,7 +48,7 @@ module.exports = {
     twilioClient.messages
     .create({
        body: msg,
-       from: twilioNumber,
+       from: process.env.TWILIO_NUMBER,
        to: data.recipient_phone_number,
     })
     .then(message => console.log("Twilio SID:", message.sid))

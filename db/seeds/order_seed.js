@@ -62,19 +62,20 @@ exports.seed = function(knex, Promise) {
   }
 
   function insertCustomers(){
+    console.log(process.env)
     return knex("logins").select().then(result =>{
       knex("customers").insert([
         {
           first_name: "Frank",
           login_id: result[0].login_id,
           last_name: "Zhou",
-          phone_number: "6476096899"
+          phone_number: process.env.FRANK_PHONE
         },
         {
           login_id: result[1].login_id,
           first_name: "Adib",
           last_name: "Al-Amir",
-          phone_number: "6476096899"
+          phone_number: process.env.FRANK_PHONE
         }
       ]).asCallback();
     });
@@ -87,7 +88,7 @@ exports.seed = function(knex, Promise) {
         login_id: result[2].login_id,
         name: "Lighthouse Labs",
         address: "46 Spadina Ave",
-        phone_number: "6475376750"
+        phone_number: process.env.ADIB_PHONE
       }
       ).asCallback();
     });
@@ -129,7 +130,7 @@ exports.seed = function(knex, Promise) {
           category_id: result[0].category_id,//1
           name: "Sweet Potato Fries",
           price: 1199,
-          description: "Crispy PEI sweet potato fires.",
+          description: "Crispy PEI sweet potato fries.",
           url: "/images/sweet-potato.jpg",
           prep_time: 5
         },
