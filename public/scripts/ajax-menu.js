@@ -29,8 +29,9 @@ function createMenuItem(dataRow){
           ${dataRow.description}
         </div>
         <div>
-          <div>
+          <div class="item-price">
             ${formattedPrice}
+          </div>
           <div>
             <form id="${dataRow.item_id}">
               <input name="item_name" type="hidden" value="${dataRow.item_name}">

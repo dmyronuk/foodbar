@@ -48,7 +48,7 @@ exports.seed = function(knex, Promise) {
       },
       {
         email: "restaurant@gmail.com",
-        password: "z"
+        password: "$2b$10$O4vwxT6tyA66VPFAtv7jjOgF4hmUkX9MQCrHYus04Cr4dK5BJe70K"
       },
     ]).asCallback();
   }
