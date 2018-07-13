@@ -105,18 +105,19 @@ module.exports = {
         const customers = await queries.selectCustomerFromEmail(req.session.email);
         const prepTime = await queries.getTotalPrepTimeFromLatestOrder();
         const restaurants = await queries.selectAllInfoFromRestaurants(1);
-
         let info = customers[0];
 
         //sends SMS to restaurant
-        helpers.sendSMS({
-          cart: req.session.cart,
-          first_name: info.first_name,
-          last_name: info.last_name,
-          total_cost: total_cost,
-          ready_time: ready_time,
-          recipient_phone_number: `+1${restaurants[0].phone_number.replace("-", "")}`,
-        }, helpers.createRestaurantSMS);
+        if(helpers.credentialsAreProvided()){
+          helpers.sendSMS({
+            cart: req.session.cart,
+            first_name: info.first_name,
+            last_name: info.last_name,
+            total_cost: total_cost,
+            ready_time: ready_time,
+            recipient_phone_number: `+1${restaurants[0].phone_number.replace("-", "")}`,
+          }, helpers.createRestaurantSMS);
+        }
 
         req.session.cart = {};
         return res.json({success: true});
@@ -130,20 +131,14 @@ module.exports = {
       queries.getLatestOrder().then(result => {
         // sends SMS to Customer
 
-      let order_info = result[0]
-      let phone_number = `+1${order_info.phone_number.replace("-", "")}`
+      let order_info = result[0];
+      let phone_number = `+1${order_info.phone_number.replace("-", "")}`;
 
-      let sms = createClientSMS({
-        first_name: order_info.first_name,
-        prep_time: req.body.time,
-        recipient_phone_number: phone_number,
-      })
-
-      sendSMS({
+      helpers.sendSMS({
         first_name: order_info.first_name,
         prep_time: req.body.time,
         recipient_phone_number: `+1${order_info.phone_number.replace("-", "")}`,
-      }, createClientSMS);
+      }, helpers.createClientSMS);
 
         res.json({"success":true});
       })

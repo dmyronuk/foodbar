@@ -1,8 +1,8 @@
 # FoodBar
 
-Foodbar is a full stack application that lets you order food from a restaurant. After a checkout, the customer and the restaurant are notified of the order that was placed via SMS. The client will receive a text containing the total price and the estimated completion time. The restaurant will receive a text containing the items and the time that the order was placed.
+FoodBar is a food-ordering app that uses the Twilio API to automate communication between vendor and client.  Users can browse menus, add items to a shopping cart and review their order before checkout.  Once an order is submitted, the vendor will receive an SMS confirmation message.  The business can then specify a preparation time and the app will auto-generate an SMS response to the customer.
 
-# Final Product
+# Screenshots
 
 !["Screenshot of home page"](https://github.com/dmyronuk/foodbar/blob/working/docs/homepage.PNG?raw=true)
 !["Screenshot of lunch menu"](https://github.com/dmyronuk/foodbar/blob/working/docs/menu.PNG?raw=true)
@@ -11,36 +11,48 @@ Foodbar is a full stack application that lets you order food from a restaurant. 
 
 
 ## Dependencies
-
 - Express
 - Node 5.10.x or above
 - body-parser
 - node-sass
 - bcrypt
 - cookie-session
-- pg
+- postgresql
 - knex
 - twilio
 
 ## Getting Started
 
-1. Fork this repository, then clone your fork of this repository.
-2. Install dependencies using the `npm install` command.
-3. Within postgres (type psql), run these commands
-  - CREATE ROLE labber WITH LOGIN password 'labber';
-  - CREATE DATABASE midterm OWNER labber;
-4. Change into "db" folder and run these commands:
-  - knex migrate:latest
-  - knex seed:run
-5. Start the web server using the `npm run local` command. The app will be served at <http://localhost:8080/>.
-6. Go to <http://localhost:8080/> in your browser.
+#### Install Dependencies
+-  `npm install`
 
-## Notes
+#### Setup Postgres Database
+- From the psql terminal run:
+```
+CREATE ROLE labber WITH LOGIN password 'labber';
+CREATE DATABASE midterm OWNER labber;
+```
 
-- Twilio's api will only allow for registered phone numbers so to test this functionality, you can contact the developers.
+- From the /db directory run:
+
+```
+knex migrate:latest;
+knex seed:run;
+```
+
+#### Configure Twilio API (optional)
+- To test the app's message features, sign up for a free Twilio API key at <https://www.twilio.com/try-twilio>
+- Update the project's .env file with the following credentials:
+    - `TWILIO_TOKEN`
+    - `TWILIO_ACCOUNT_SID`
+    - `TWILIO_NUMBER` phone number provided by Twilio
+    - `BUSINNESS_PHONE` phone number that will receive notifications when a customer places an order
+    - `CLIENT_PHONE` phone number that will receive confirmation when restaurant confirms order
+
+#### Run the dev server
+- Start the web server ```npm run local``` open the browser to <http://localhost:8080/>
 
 ## Developers
-
-https://github.com/dmyronuk
-https://github.com/adibalamir
-https://github.com/buzzjam
+- https://github.com/dmyronuk
+- https://github.com/adibalamir
+- https://github.com/buzzjam

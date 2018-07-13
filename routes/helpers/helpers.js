@@ -1,6 +1,13 @@
 const accountSID = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_TOKEN
-const twilioClient = require('twilio')(accountSID, authToken);
+let twilioClient;
+
+//Configured so that app still functions if no twilio credentials are added to the project .env file
+try{
+  twilioClient = require('twilio')(accountSID, authToken);
+}catch(err){
+  twilioClient = null;
+}
 
 //minutes offSet variable represents minutes in the future relative to time when function called
 function getTimeStr(minutesOffset, offsetFromUTC){
@@ -23,6 +30,16 @@ function getTimeStr(minutesOffset, offsetFromUTC){
 
 module.exports = {
   getTimeStr: getTimeStr,
+
+  credentialsAreProvided: () => {
+    let credentials = ["TWILIO_TOKEN", "TWILIO_NUMBER", "TWILIO_ACCOUNT_SID", "CLIENT_PHONE", "BUSINESS_PHONE=0"];
+    return credentials.reduce((acc, credential) => {
+      if(! process.env[credential]){
+        acc = false;
+      }
+      return acc;
+    }, true)
+  },
 
   //data: first_name, restaurant_name, total_cost, ready_time
   createClientSMS: (data) => {
