@@ -18,7 +18,7 @@ module.exports = {
     let id = req.params.id;
     let quantity = Number(req.body.quantity);
 
-    if(item_id_exists){
+    if(item_id_exists && req.session.cart){
       let sessionItem = req.session.cart[id];
 
       //check to see if there are any of this item already in cart - if yes

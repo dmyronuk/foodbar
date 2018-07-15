@@ -26,15 +26,13 @@ FoodBar is a food-ordering app that uses the Twilio API to automate communicatio
 #### Install Dependencies
 -  `npm install`
 
-#### Setup Postgres Database
-- From the psql terminal run:
+#### Setup Postgres - from the psql terminal run:
 ```
 CREATE ROLE labber WITH LOGIN password 'labber';
 CREATE DATABASE midterm OWNER labber;
 ```
 
-- From the /db directory run:
-
+#### Populate the database - from the /db directory run:
 ```
 knex migrate:latest;
 knex seed:run;
@@ -50,7 +48,8 @@ knex seed:run;
     - `CLIENT_PHONE` phone number that will receive confirmation when restaurant confirms order
 
 #### Run the dev server
-- Start the web server ```npm run local``` open the browser to <http://localhost:8080/>
+- ```npm run local```
+- Run in browser at <http://localhost:8080/>
 
 ## Developers
 - https://github.com/dmyronuk

@@ -101,13 +101,18 @@
       color:$default-heading-color;
     }
 
-    .item-price{
-      width:3rem;
-      text-align:left;
-    }
-
     div{
       position:relative;
+    }
+
+    .item-form-container{
+      display:flex;
+      flex-direction:row;
+      align-items:center;
+    }
+
+    .price{
+      width:2.5rem;
     }
 
     form{
@@ -116,7 +121,7 @@
         border:1px solid black;
         width:4em;
         text-align:center;
-        margin: 0 1rem 0 1rem;
+        margin: 0 1rem;
       }
 
       .add-to-cart{
@@ -125,15 +130,24 @@
         padding:0.1rem 0.7rem 0.1rem 0.7rem;
         cursor:pointer;
         color:white;
-        background-color:blue;
+        background-color:$add-item-button-color;
         transition:background-color 1s;
         border-radius:0.2rem;
+        margin:0;
 
         &:hover{
-          background-color:#4c4cff;
+          background-color:lighten($add-item-button-color, 20%);
         }
       }
     }
   }
 }
 
+@keyframes enlarge-font {
+  50% {background-color:darken($add-item-button-color, 25%)}
+  100% {background-color:$add-item-button-color}
+}
+
+.button-anim{
+  animation: enlarge-font 2s;
+}

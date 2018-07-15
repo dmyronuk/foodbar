@@ -3,6 +3,11 @@ function addMenuItemHandler(event){
   event.preventDefault();
   var $target = $(event.target);
   var id = $target.attr("id");
+  var $submitButton = $target.children(".add-to-cart");
+  $submitButton.addClass('button-anim');
+  $submitButton.on("animationend", function(){
+    $submitButton.removeClass('button-anim');
+  })
 
   $.ajax({
     type: "POST",
@@ -28,8 +33,8 @@ function createMenuItem(dataRow){
         <div>
           ${dataRow.description}
         </div>
-        <div>
-          <div class="item-price">
+        <div class="item-form-container">
+          <div class="price">
             ${formattedPrice}
           </div>
           <div>
