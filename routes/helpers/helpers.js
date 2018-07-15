@@ -32,7 +32,7 @@ module.exports = {
   getTimeStr: getTimeStr,
 
   credentialsAreProvided: () => {
-    let credentials = ["TWILIO_TOKEN", "TWILIO_NUMBER", "TWILIO_ACCOUNT_SID", "CLIENT_PHONE", "BUSINESS_PHONE=0"];
+    let credentials = ["TWILIO_TOKEN", "TWILIO_NUMBER", "TWILIO_ACCOUNT_SID", "BUSINESS_PHONE=0"];
     return credentials.reduce((acc, credential) => {
       if(! process.env[credential]){
         acc = false;
