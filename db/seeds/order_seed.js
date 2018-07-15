@@ -1,3 +1,5 @@
+require("dotenv").config({path: "../../.env"})
+
 exports.seed = function(knex, Promise) {
 
   function deleteOrderLines(){
@@ -69,13 +71,13 @@ exports.seed = function(knex, Promise) {
           first_name: "Frank",
           login_id: result[0].login_id,
           last_name: "Zhou",
-          phone_number: process.env.FRANK_PHONE
+          phone_number: process.env.CLIENT_PHONE
         },
         {
           login_id: result[1].login_id,
           first_name: "Adib",
           last_name: "Al-Amir",
-          phone_number: process.env.FRANK_PHONE
+          phone_number: process.env.CLIENT_PHONE
         }
       ]).asCallback();
     });
@@ -88,7 +90,7 @@ exports.seed = function(knex, Promise) {
         login_id: result[2].login_id,
         name: "Lighthouse Labs",
         address: "46 Spadina Ave",
-        phone_number: process.env.ADIB_PHONE
+        phone_number: process.env.BUSINESS_PHONE
       }
       ).asCallback();
     });

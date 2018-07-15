@@ -5,7 +5,6 @@ FoodBar is a food-ordering app that uses the Twilio API to automate communicatio
 # Screenshots
 
 !["App demo"](https://raw.githubusercontent.com/dmyronuk/foodbar/textreply/docs/demo.gif)
-!["Screenshot of sample SMS"](https://raw.githubusercontent.com/dmyronuk/foodbar/textreply/docs/SMS-sample.jpg)
 
 ## Dependencies
 - Express
@@ -42,7 +41,6 @@ knex seed:run;
     - `TWILIO_ACCOUNT_SID`
     - `TWILIO_NUMBER` phone number provided by Twilio
     - `BUSINNESS_PHONE` phone number that will receive notifications when a customer places an order
-    - `CLIENT_PHONE` phone number that will receive confirmation when restaurant confirms order
 
 #### Run the dev server
 - ```npm run local```
