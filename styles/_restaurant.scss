@@ -1,5 +1,5 @@
 .restaurant-main-container{
-  margin:10rem 1rem 0rem 1rem;
+  margin:10rem 1rem 4rem 1rem;
   box-shadow:-2px 2px 2px #333333;
   min-height:12em;
   position:relative;
@@ -10,7 +10,7 @@
   header{
     display:flex;
     flex-direction:row;
-    background:black;
+    background:$restaurant-header-color;
     align-items:center;
     color:white;
     padding:1em;
