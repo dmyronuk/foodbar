@@ -4,9 +4,8 @@ FoodBar is a food-ordering app that uses the Twilio API to automate communicatio
 
 # Screenshots
 
-!["App demo"](https://github.com/dmyronuk/foodbar/blob/working/docs/demo.gif?raw=true)
-!["Screenshot of sample SMS"](https://github.com/dmyronuk/foodbar/blob/working/docs/SMS-sample.jpg?raw=true)
-
+!["App demo"](https://raw.githubusercontent.com/dmyronuk/foodbar/textreply/docs/demo.gif)
+!["Screenshot of sample SMS"](https://raw.githubusercontent.com/dmyronuk/foodbar/textreply/docs/SMS-sample.jpg)
 
 ## Dependencies
 - Express
